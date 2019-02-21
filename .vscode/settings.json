@@ -1,0 +1,15 @@
+{
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/apps/build": true,
+        "**/apps/statics": true,
+        "**/apis/build": true,
+        "**/log": true,
+        "/log/": true,
+        "/apps/build/": true
+    },
+    "git.ignoreLimitWarning": true,
+    "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
+    "files.insertFinalNewline": true,
+}
