@@ -29,6 +29,7 @@ MongoClient.connect(mongo_uri, { useNewUrlParser: true })
         app.listen(PORT, () => console.log(`KoffieApp REST API running on port ${PORT}`))
 }).catch(error => console.error(error))
 
+// Close MongoDB connection when closing application
 process.on('SIGINT', () => {
     MongoClient.close();
     process.exit();

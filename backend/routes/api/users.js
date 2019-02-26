@@ -1,64 +1,91 @@
 const express = require('express')
 const router = express.Router()
-const ObjectId = require('mongodb').ObjectId;
+const ObjectId = require('mongodb').ObjectId
 
 // Get all users
-router.get('/', (req, res) => {
-    const collection = req.app.locals.usersCollection
-    collection.find({})
-        .toArray()
-        .then(response => res.status(200)
-        .json(response))
-        .catch(error => console.error(error))
+router.get('/', async (req, res) => {
+    let collection = req.app.locals.usersCollection;
+
+    try {
+        let response = await collection.find({}).toArray();
+        res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        res.status(500)
+    }
 })
 
 // Get single user
-router.get('/:id', (req, res) => {
-    const collection = req.app.locals.usersCollection
-    collection.findOne({ _id: parseInt(req.params.id) })
-        .then(response => res.status(200)
-        .json(response))
-        .catch(error => console.error(error))
+router.get('/:id', async (req, res) => {
+    let collection = req.app.locals.usersCollection
+    let id = ObjectId(req.params.id)
+
+    try {
+        let response = await collection.findOne({ _id: id })
+        res.status(200).json(response)
+    } catch(error) {
+        console.log(error)
+        res.status(500)
+    }
 })
 
 // Make new user
-router.post('/create', (req, res) => {
-    const collection = req.app.locals.usersCollection
+router.post('/create', async (req, res) => {
+    let collection = req.app.locals.usersCollection
+    let id = new ObjectId()
 
-    // TODO: Rekening houden met counter van _id kolom?
-    collection.insertOne({
-        "name"      : req.body.name,
-        "email"     : req.body.email,
-        "status"    : 'active'
-    }).then(response => res.status(200)
-        .json(response))
-        .catch(error => console.error(error))
+    try {
+        collection.insertOne({
+            _id     : id,
+            name    : req.body.name,
+            email   : req.body.email,
+            status  : 'active'
+        })
+        let allUsers = await collection.find({ _id : id }).toArray()
+        res.status(200).json(allUsers)
+    } catch (error) {
+        console.log(error)
+        res.status(500)
+    }
 })
 
 // Update user
-router.put('/update/:id', (req, res) => {
-    const collection = req.app.locals.usersCollection
-    collection.updateOne(
-        { "_id" : parseInt(req.params.id) },
-        {
-            $set:
+router.put('/update/:id', async (req, res) => {
+    let collection = req.app.locals.usersCollection
+    let id = ObjectId(req.params.id)
+
+    try {
+        await collection.updateOne(
+            { _id : id },
             {
-                "name" : req.body.name,
-                "email": req.body.email
-            },
-            $currentDate: { lastModified: true }
-        }).then(response => res.status(200)
-            .json(response))
-            .catch(error => console.error(error))
+                $set:
+                {
+                    name  : req.body.name,
+                    email : req.body.email
+                },
+                $currentDate: { lastModified: true }
+            })
+        let user = await collection.find({ _id : id }).toArray()
+        res.status(200).json(user)
+    } catch (error) {
+        console.log(error)
+        res.status(500)
+    }
 })
 
 // Delete user
-router.delete('/delete/:id', (req, res) => {
-    const collection = req.app.locals.usersCollection
-    collection.deleteOne({ "_id" : parseInt(req.params.id) })
-        .then(response => res.status(200)
-        .json(response))
-        .catch(error => console.error(error))
+router.delete('/delete/:id', async (req, res) => {
+    let collection = req.app.locals.usersCollection;
+    let id = ObjectId(req.params.id)
+
+    try {
+        collection.deleteOne({ _id : id })
+        let allUsers = await collection.find({}).toArray()
+        res.status(200).json(allUsers)
+    } catch(error) {
+        console.log(error)
+        res.status(500)
+    }
 })
 
 module.exports = router
