@@ -2,7 +2,7 @@
 
 ### KoffieApp
 
-#### Backend starten:
+#### Backend opstarten
 1. Installeer de laatste versie van [NodeJS](https://nodejs.org/en/download/).
 2. Open een terminal binnen `koffieapp\backend` en voer het volgende commando uit: `npm run dev`.
 3. Wacht op bevestiging van opstarten: `KoffieApp REST API running on port 5000`.
