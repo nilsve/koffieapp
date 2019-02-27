@@ -1,78 +1,90 @@
 const express = require('express')
 const router = express.Router()
-
-const users = [
-    {
-        id: 1,
-        name: 'Indy Maat',
-        email: 'i.maat@student.fontys.nl',
-        status: 'active'
-    },
-    {
-        id: 2,
-        name: 'Nils van Eijk',
-        email: 'n.v.eijk@student.fontys.nl',
-        status: 'active'
-    },
-    {
-        id: 3,
-        name: 'Marck Vincent',
-        email: 'm.vincent@student.fontys.nl',
-        status: 'active'
-    }
-]
+const ObjectId = require('mongodb').ObjectId
 
 // Get all users
-router.get('/', (req, res) => {
-    res.json(users)
+router.get('/', async (req, res) => {
+    let collection = req.app.locals.usersCollection;
+
+    try {
+        let response = await collection.find({}).toArray();
+        res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+        res.status(500)
+    }
 })
 
 // Get single user
-router.get('/:id', (req, res) => {
-    const found = users.some(user => user.id === parseInt(req.params.id))
+router.get('/:id', async (req, res) => {
+    let collection = req.app.locals.usersCollection
+    let id = ObjectId(req.params.id)
 
-    if (found) {
-        res.json(users.filter(user => user.id === parseInt(req.params.id)))
-    } else {
-        res.status(400).json({ 'Bad request': `No user with id: ${req.params.id}`})
+    try {
+        let response = await collection.findOne({ _id: id })
+        res.status(200).json(response)
+    } catch(error) {
+        console.log(error)
+        res.status(500)
     }
 })
 
 // Make new user
-router.post('/', (req, res) => {
-    const newuser = {
-        id: users.length + 1,
-        name: req.body.name,
-        email: req.body.email,
-        status: 'active'
-    }
+router.post('/create', async (req, res) => {
+    let collection = req.app.locals.usersCollection
+    let id = new ObjectId()
 
-    console.log(newuser.name)
-    console.log(newuser.email)
-
-    if (!newuser.name || !newuser.email) {
-        res.status(400).json({ "Missing information": "Please enter a name and email"})
+    try {
+        collection.insertOne({
+            _id     : id,
+            name    : req.body.name,
+            email   : req.body.email,
+            status  : 'active'
+        })
+        let allUsers = await collection.find({ _id : id }).toArray()
+        res.status(200).json(allUsers)
+    } catch (error) {
+        console.log(error)
+        res.status(500)
     }
-    users.push(newuser)
-    res.json(users)
 })
 
 // Update user
-router.put('/:id', (req, res) => {
-    const found = users.some(user => user.id === parseInt(req.params.id))
+router.put('/update/:id', async (req, res) => {
+    let collection = req.app.locals.usersCollection
+    let id = ObjectId(req.params.id)
 
-    if (found) {
-        const updUser = req.body
-        users.forEach(user => {
-            if (user.id === parseInt(req.params.id)) {
-                user.name = updUser.name ? updUser.name : user.name,
-                user.email = updUser.email ? updUser.email : user.email
+    try {
+        await collection.updateOne(
+            { _id : id },
+            {
+                $set:
+                {
+                    name  : req.body.name,
+                    email : req.body.email
+                },
+                $currentDate: { lastModified: true }
+            })
+        let user = await collection.find({ _id : id }).toArray()
+        res.status(200).json(user)
+    } catch (error) {
+        console.log(error)
+        res.status(500)
+    }
+})
 
-                res.json({"User updated": users})
-            }
-        })
-    } else {
-        res.status(400).json({ "User does not exist" : `No user with id: ${req.params.id}`})
+// Delete user
+router.delete('/delete/:id', async (req, res) => {
+    let collection = req.app.locals.usersCollection;
+    let id = ObjectId(req.params.id)
+
+    try {
+        collection.deleteOne({ _id : id })
+        let allUsers = await collection.find({}).toArray()
+        res.status(200).json(allUsers)
+    } catch(error) {
+        console.log(error)
+        res.status(500)
     }
 })
 
