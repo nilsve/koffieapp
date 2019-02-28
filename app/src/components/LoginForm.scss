@@ -1,0 +1,11 @@
+.LoginForm {
+  width: 300px;
+  &__form {
+    display: flex;
+    flex-direction: column;
+    input {
+      border-radius: 5px;
+      margin: 5px;
+    }
+  }
+}
