@@ -7,26 +7,29 @@ const AuthContext = React.createContext(null);
 
 export class AuthStore extends BaseStore {
 
-    static propTypes = {
-        children: PropTypes.node.isRequired,
-    }
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+  }
 
-    state = {
-        loggedOn: false,
-        setLoggedOn: this.setLoggedOn,
-    }
+  state = {
+    loggedOn: false,
+  }
 
-    render() {
-        return <AuthContext.Provider value={this.state}>
-            {this.props.children}
-        </AuthContext.Provider>
+  render() {
+    const context = {
+      ...this.state,
+      setLoggedOn: this.setLoggedOn,
     }
+    return <AuthContext.Provider value={context}>
+      {this.props.children}
+    </AuthContext.Provider>
+  }
 
-    setLoggedOn = () => {
-        this.setState({
-            loggedOn: true,
-        });
-    }
+  setLoggedOn = () => {
+    this.setState({
+      loggedOn: true,
+    });
+  }
 }
 
 export const AuthConsumer = AuthContext.Consumer;

@@ -13,6 +13,11 @@ export default class AuthProvider extends React.Component {
     setLoggedOn: this.setLoggedOn,
   }
 
+  componentDidMount() {
+    //TODO: Checken via de server of je al ingelogd bent
+
+  }
+
   render() {
     return <AuthStore>
       <AuthConsumer>
@@ -25,13 +30,15 @@ export default class AuthProvider extends React.Component {
     if (store.loggedOn) {
       return this.props.children;
     } else {
+      console.log(store)
       return <LoginForm onLoggedOn={store.setLoggedOn}/>
     }
   }
 
-  setLoggedOn = () => {
+  setLoggedOn = (userinfo) => {
     this.setState({
       loggedOn: true,
+      userinfo,
     });
   }
 }

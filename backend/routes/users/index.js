@@ -30,7 +30,7 @@ router.get('/:id', async (req, res) => {
 })
 
 // Make new user
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
     let collection = req.app.locals.usersCollection
     let id = new ObjectId()
 
@@ -50,7 +50,7 @@ router.post('/create', async (req, res) => {
 })
 
 // Update user
-router.put('/update/:id', async (req, res) => {
+router.put('/:id', async (req, res) => {
     let collection = req.app.locals.usersCollection
     let id = ObjectId(req.params.id)
 
@@ -74,7 +74,7 @@ router.put('/update/:id', async (req, res) => {
 })
 
 // Delete user
-router.delete('/delete/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
     let collection = req.app.locals.usersCollection;
     let id = ObjectId(req.params.id)
 

@@ -1,13 +1,12 @@
+import './App.scss';
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import AuthProvider from './components/AuthProvider';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        <AuthProvider />
+        <AuthProvider>Hallo</AuthProvider>
       </div>
     );
   }
