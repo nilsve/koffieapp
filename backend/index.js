@@ -1,20 +1,18 @@
 const express = require('express')
 const path = require('path')
-const logger = require('./middleware/logger')
 const mongo_uri = 'mongodb://localhost:27017';
 const MongoClient = require('mongodb').MongoClient
 
 const app = express()
 
-// Logger
-app.use(logger)
+app.use(require('./middleware'))
 
 // Handle JSON and encoded URL's
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
 // Use API route
-app.use('/api/users', require('./routes/api/users'))
+app.use('/', require('./routes'))
 
 // Set static folder --> This has to become React App directory
 app.use(express.static(path.join(__dirname, 'public')))
@@ -24,8 +22,8 @@ const PORT = process.env.PORT || 5000
 
 MongoClient.connect(mongo_uri, { useNewUrlParser: true })
     .then(client => {
-        const db = client.db('koffieapp')
-        app.locals.usersCollection = usersCollection = db.collection('users')
+        // const db = client.db('koffieapp')
+        // app.locals.usersCollection = usersCollection = db.collection('users')
         app.listen(PORT, () => console.log(`KoffieApp REST API running on port ${PORT}`))
 }).catch(error => console.error(error))
 

@@ -12,4 +12,6 @@
     "git.ignoreLimitWarning": true,
     "javascript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
     "files.insertFinalNewline": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false
 }
