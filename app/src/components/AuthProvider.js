@@ -8,16 +8,7 @@ export default class AuthProvider extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
   }
-  state = {
-    loggedOn: false,
-    setLoggedOn: this.setLoggedOn,
-  }
-
-  componentDidMount() {
-    //TODO: Checken via de server of je al ingelogd bent
-
-  }
-
+  
   render() {
     return <AuthStore>
       <AuthConsumer>
@@ -35,10 +26,5 @@ export default class AuthProvider extends React.Component {
     }
   }
 
-  setLoggedOn = (userinfo) => {
-    this.setState({
-      loggedOn: true,
-      userinfo,
-    });
-  }
+
 }
