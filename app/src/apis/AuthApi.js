@@ -2,7 +2,7 @@ import BaseApi from './BaseApi';
 
 export default class AuthApi extends BaseApi {
   constructor() {
-    super('auth')
+    super('auth', false)
   }
 
   login(username, password) {

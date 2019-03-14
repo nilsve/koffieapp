@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import BaseStore from './BaseStore';
+import {loadUserData, storeUserData} from 'auth/authHelpers'
 
 const AuthContext = React.createContext(null);
 
@@ -13,6 +14,17 @@ export class AuthStore extends BaseStore {
 
   state = {
     loggedOn: false,
+    userInfo: null,
+    jwtToken: null,
+  }
+
+  componentWillMount() {
+    //TODO: Checken via de server of je al ingelogd bent
+    const userData = loadUserData();
+
+    if (userData) {
+      this.setUserData(userData);
+    }
   }
 
   render() {
@@ -25,9 +37,17 @@ export class AuthStore extends BaseStore {
     </AuthContext.Provider>
   }
 
-  setLoggedOn = () => {
+  setLoggedOn = (jwtToken, userInfo) => {
+    const userData = {jwtToken, userInfo};
+    storeUserData(userData);
+
+    this.setUserData(userData);
+  }
+
+  setUserData(userData) {
     this.setState({
       loggedOn: true,
+      ...userData,
     });
   }
 }
