@@ -12,11 +12,24 @@ class LoginForm extends Component {
   state = {
     username: '',
     password: '',
+
+    newUsername: '',
+    newPassword: '',
     invalidPassword: false,
     error: false,
+
+    status: 'login', // State kan 'login' zijn of 'register'
   };
 
   render() {
+    if (this.state.status === 'login') {
+      return this.renderLoginForm();
+    } else {
+      return this.renderRegisterForm();
+    }
+  }
+
+  renderLoginForm() {
     const {error, invalidPassword, username, password} = this.state;
     return <div className="LoginForm">
       <form className="LoginForm__form">
@@ -25,9 +38,40 @@ class LoginForm extends Component {
         {error && <b>Onbekende fout opgetreden!</b>}
         <input type="text" placeholder="Gebruikersnaam" value={username} onChange={this.handleUpdateField('username')}/>
         <input type="password" placeholder="Wachtwoord" value={password} onChange={this.handleUpdateField('password')} />
-        <input type="submit" value="Inloggedn" onClick={this.handleLogin}/>
+        <input type="submit" value="Inloggen" onClick={this.handleLogin}/>
+        <input type="button" value="Registreren" onClick={this.handleRegister} />
       </form>
     </div>;
+  }
+
+  renderRegisterForm() {
+    const {newUsername, newPassword} = this.state;
+    return <div className="LoginForm">
+      <form className="LoginForm__form">
+        <h3>Registreren</h3>
+        <input type="text" placeholder="Gebruikersnaam" value={newUsername} onChange={this.handleUpdateField('newUsername')} />
+        <input type="password" placeholder="Wachtwoord" value={newPassword} onChange={this.handleUpdateField('newPassword')} />
+        <input type="submit" value="Registreren" onClick={this.handleRegisterComplete}/>
+      </form>
+    </div>;
+  }
+
+  handleRegisterComplete = async (e) => {
+    e.preventDefault();
+    const {newUsername, newPassword} = this.state;
+
+    try {
+      await authApi.register(newUsername, newPassword);
+      
+    } catch (err) {
+
+    }
+  }
+
+  handleRegister = () => {
+    this.setState({
+      status: 'register',
+    });
   }
 
   handleLogin = async (e) => {
