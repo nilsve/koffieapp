@@ -1,9 +1,11 @@
-const express = require('express')
-const path = require('path')
-const mongo_uri = 'mongodb://localhost:27017';
-const MongoClient = require('mongodb').MongoClient
+import express from 'express';
+import path from 'path';
+
+import mongo from './mongo';
 
 const app = express()
+
+const PORT = process.env.PORT || 5000
 
 app.use(require('./middleware'))
 
@@ -18,14 +20,15 @@ app.use('/', require('./routes'))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Look for port number in environment variable, otherwise make it 5000
-const PORT = process.env.PORT || 5000
 
-MongoClient.connect(mongo_uri, { useNewUrlParser: true })
-    .then(client => {
-        // const db = client.db('koffieapp')
-        // app.locals.usersCollection = usersCollection = db.collection('users')
-        app.listen(PORT, () => console.log(`KoffieApp REST API running on port ${PORT}`))
-}).catch(error => console.error(error))
+async function startServer() {
+  const db = await mongo;
+  app.locals.usersCollection = db.usersCollection;
+
+  app.listen(PORT, () => console.log(`KoffieApp REST API running on port ${PORT}`));
+}
+
+startServer();
 
 // Close MongoDB connection when closing application
 process.on('SIGINT', () => {

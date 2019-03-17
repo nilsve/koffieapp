@@ -1,6 +1,8 @@
 import config from '../config';
 import jwt from 'jsonwebtoken';
 
+import mongo from '../mongo';
+
 // Returnt een signed jwt token
 export function login(username, password) {
   // Jsonwebtoken ondertsteunt geen promises helaas, dus geen async functie hiero..
@@ -26,7 +28,18 @@ export function login(username, password) {
       return reject(null);
     }
   });
+}
 
+export async function register(username, password) {
+  const db = await mongo;
+  await db.usersCollection.insertOne({
+      _id: username,
+      username,
+      password,
+      status  : 'active',
+  })
+
+  return true;
 }
 
 export async function validateJwt(token) {
@@ -43,7 +56,14 @@ export async function validateJwt(token) {
 
 async function validateCredentials(username, password) {
   // TODO: Validate
-  if (username === 'test') {
+  const db = await mongo;
+
+  const user = await db.usersCollection.findOne({
+    _id: username,
+    password: password,
+  });
+
+  if (user) {
     return true;
   } else {
     return false;

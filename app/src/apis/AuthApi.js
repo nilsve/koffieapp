@@ -8,4 +8,8 @@ export default class AuthApi extends BaseApi {
   login(username, password) {
     return this.postJson('login', {username, password});
   }
+
+  register(username, password) {
+    return this.postJson('register', {username, password});
+  }
 }

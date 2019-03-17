@@ -24,11 +24,24 @@ class HomeScreen extends React.Component {
   }
 
   renderBody(authData) {
-    console.log(authData.userInfo.username)
     return <div>
       <p>Ingelogd als: {authData.userInfo.username}</p>
-      <p>{JSON.stringify(this.state.users)}</p>
+      {this.renderUsers()}
     </div>
+  }
+
+  renderUsers() {
+    const {users} = this.state;
+
+    return <table>
+      <thead>
+        <td>Gebruikersnaam</td>
+        <td>Wachtwoord</td>
+      </thead>
+      <body>
+        {users.map((user) => <tr><td>{user.username}</td><td>{user.password}</td></tr>)}
+      </body>
+    </table>;
   }
 }
 
