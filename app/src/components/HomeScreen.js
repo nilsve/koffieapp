@@ -4,14 +4,16 @@ import {AuthConsumer} from 'stores/AuthStore';
 import {userApi} from 'apis';
 
 class HomeScreen extends React.Component {
-  
+
   state = {
     users: [],
+    username: '',
+    password: '',
   }
 
   async componentDidMount() {
     const result = await userApi.getUsers();
-    
+
     this.setState({
       users: result,
     })
@@ -24,25 +26,16 @@ class HomeScreen extends React.Component {
   }
 
   renderBody(authData) {
-    return <div>
-      <p>Ingelogd als: {authData.userInfo.username}</p>
-      {this.renderUsers()}
-    </div>
+    return <div className="HomeScreen">
+      <h1>Welkom {authData.userInfo.username}</h1>
+    </div>;
   }
 
-  renderUsers() {
-    const {users} = this.state;
-
-    return <table>
-      <thead>
-        <td>Gebruikersnaam</td>
-        <td>Wachtwoord</td>
-      </thead>
-      <body>
-        {users.map((user) => <tr><td>{user.username}</td><td>{user.password}</td></tr>)}
-      </body>
-    </table>;
-  }
+  handleUpdateField = fieldName => e => {
+    this.setState({
+      [fieldName]: e.target.value,
+    });
+  };
 }
 
 export default HomeScreen;
