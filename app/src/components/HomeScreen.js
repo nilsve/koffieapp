@@ -8,6 +8,8 @@ class HomeScreen extends React.Component {
   state = {
     users: [],
     drinks: [],
+    username: '',
+    password: '',
   }
 
   async componentDidMount() {
@@ -69,6 +71,12 @@ class HomeScreen extends React.Component {
 
     </div>
   }
+
+  handleUpdateField = fieldName => e => {
+    this.setState({
+      [fieldName]: e.target.value,
+    });
+  };
 }
 
 export default HomeScreen;

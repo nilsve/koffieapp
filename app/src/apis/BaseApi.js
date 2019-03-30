@@ -23,7 +23,7 @@ export default class BaseApi {
           status: 403,
           statusText: 'Unauthorized exception',
         }
-        
+
         throw err;
       } else {
         Authorization = userData.jwtToken;
@@ -47,6 +47,17 @@ export default class BaseApi {
     }));
   }
 
+  async putJson(url, putData) {
+    return this._wrapRequest(fetch(`${config.api}/${this.endpoint}/${url}`, {
+      method: 'PUT',
+      headers: this.expandHeadersWithAuth({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(putData),
+    }));
+  }
+
   async getJson(url) {
     return this._wrapRequest(fetch(`${config.api}/${this.endpoint}/${url}`, {
       method: 'GET',
@@ -54,10 +65,17 @@ export default class BaseApi {
     }));
   }
 
+  async deleteJson(url) {
+    return this._wrapRequest(fetch(`${config.api}/${this.endpoint}/${url}`, {
+      method: 'DELETE',
+      headers: this.expandHeadersWithAuth(),
+    }));
+  }
+
   async _wrapRequest(request) {
     try {
       const response = await request;
-  
+
       if (response.ok) {
         return await response.json();
       } else {
@@ -65,7 +83,7 @@ export default class BaseApi {
           status: response.status,
           statusText: response.statusText,
         }
-        
+
         throw err;
       }
     } catch (err) {
