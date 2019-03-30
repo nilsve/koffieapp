@@ -3,6 +3,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import {authApi} from 'apis';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 class LoginForm extends Component {
   static propTypes = {
@@ -33,13 +35,16 @@ class LoginForm extends Component {
     const {error, invalidPassword, username, password} = this.state;
     return <div className="LoginForm">
       <form className="LoginForm__form">
-        <h3>Login</h3>
+        <h1>Inloggen</h1>
         {invalidPassword && <b>Onbekende gebruikersnaam en wachtwoord</b>}
         {error && <b>Onbekende fout opgetreden!</b>}
-        <input type="text" placeholder="Gebruikersnaam" value={username} onChange={this.handleUpdateField('username')}/>
-        <input type="password" placeholder="Wachtwoord" value={password} onChange={this.handleUpdateField('password')} />
-        <input type="submit" value="Inloggen" onClick={this.handleLogin}/>
-        <input type="button" value="Registreren" onClick={this.handleRegister} />
+        <TextField variant="outlined" label="Gebruikersnaam" type="text" onChange={this.handleUpdateField('username')}>{username}</TextField>
+        <span></span>
+        <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('password')}>{password}</TextField>
+        <span></span>
+        <Button variant="contained" color="primary" onClick={this.handleLogin}>Inloggen</Button>
+        <span></span>
+        <Button variant="contained" color="default" onClick={this.toggleScreen('register')}>Registreren</Button>
       </form>
     </div>;
   }
@@ -47,13 +52,17 @@ class LoginForm extends Component {
   renderRegisterForm() {
     const {newUsername, newPassword} = this.state;
     return <div className="LoginForm">
-      <form className="LoginForm__form">
-        <h3>Registreren</h3>
-        <input type="text" placeholder="Gebruikersnaam" value={newUsername} onChange={this.handleUpdateField('newUsername')} />
-        <input type="password" placeholder="Wachtwoord" value={newPassword} onChange={this.handleUpdateField('newPassword')} />
-        <input type="submit" value="Registreren" onClick={this.handleRegisterComplete}/>
-      </form>
-    </div>;
+          <form className="LoginForm__form">
+            <h1>Registreren</h1>
+            <TextField variant="outlined" label="Gebruikersnaam" type="text" onChange={this.handleUpdateField('newUsername')}>{newUsername}</TextField>
+            <span></span>
+            <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('newPassword')}>{newPassword}</TextField>
+            <span></span>
+            <Button variant="contained" color="primary" onClick={this.handleRegisterComplete}>Registreren</Button>
+            <span></span>
+            <Button variant="contained" color="default" onClick={this.toggleScreen('login')}>Terug</Button>
+          </form>
+        </div>
   }
 
   handleRegisterComplete = async (e) => {
@@ -62,15 +71,15 @@ class LoginForm extends Component {
 
     try {
       await authApi.register(newUsername, newPassword);
-      
     } catch (err) {
-
+      
     }
   }
 
-  handleRegister = () => {
+  toggleScreen = newStatus => e => {
+    e.preventDefault()
     this.setState({
-      status: 'register',
+      status: newStatus,
     });
   }
 
