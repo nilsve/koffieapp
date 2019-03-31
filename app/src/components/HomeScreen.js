@@ -1,19 +1,26 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
-
 import {userApi} from 'apis';
+import {Typography, Grid, Card, CardContent, CardActions, Button} from '@material-ui/core';
 
 class HomeScreen extends React.Component {
-  
+
   state = {
     users: [],
+    drinks: [],
   }
 
   async componentDidMount() {
     const result = await userApi.getUsers();
-    
+
     this.setState({
-      users: result,
+      users : result,
+      drinks: [
+        {drink: 'Koffie',     desc: 'Gewoon zwarte koffie'},
+        {drink: 'Cappucino',  desc: 'Romig met een shot espresso'},
+        {drink: 'Latte Macchiato',  desc: 'Heel veel melk en espresso'},
+        {drink: 'Latte',  desc: 'Veel te veel melk'},
+      ]
     })
   }
 
@@ -23,25 +30,44 @@ class HomeScreen extends React.Component {
     </AuthConsumer>;
   }
 
+  handleChange = key => (value) => {
+    this.setState({
+      [key]: value,
+    });
+  };
+
   renderBody(authData) {
-    return <div>
-      <p>Ingelogd als: {authData.userInfo.username}</p>
-      {this.renderUsers()}
+    const { drinks, spacing } = this.state
+
+    return <div className="HomeScreen">
+      <h1>Welkom {authData.userInfo.username}</h1>
+      <Grid container className="container" spacing={40}>
+        <Grid item xs={12}>
+          <Grid container className="drinks" justify="center" spacing={40}>
+            {drinks.map((drink) => (
+              <Grid key={drink.drink} item>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h5" component="h2">
+                      {drink.drink}
+                    </Typography>
+                    <Typography color="textSecondary">
+                      {drink.desc}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button>
+                      Kies {drink.drink}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
+      </Grid>
+
     </div>
-  }
-
-  renderUsers() {
-    const {users} = this.state;
-
-    return <table>
-      <thead>
-        <td>Gebruikersnaam</td>
-        <td>Wachtwoord</td>
-      </thead>
-      <body>
-        {users.map((user) => <tr><td>{user.username}</td><td>{user.password}</td></tr>)}
-      </body>
-    </table>;
   }
 }
 
