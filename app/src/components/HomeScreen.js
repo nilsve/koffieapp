@@ -1,48 +1,73 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
-
-import {userApi} from 'apis';
+import {userApi,orderApi} from 'apis';
 
 class HomeScreen extends React.Component {
-  
+
   state = {
-    users: [],
+    drink: '',
+    group: '',
+    allOrders: [],
   }
 
   async componentDidMount() {
-    const result = await userApi.getUsers();
-    
+    const result = orderApi.getOrders()
+    console.log(result)
     this.setState({
-      users: result,
+      allOrders:result
     })
   }
 
   render() {
-    return <AuthConsumer>
-      {(authData) => this.renderBody(authData)}
-    </AuthConsumer>;
+    return this.renderHomeScreen()
   }
 
-  renderBody(authData) {
-    return <div>
-      <p>Ingelogd als: {authData.userInfo.username}</p>
-      {this.renderUsers()}
+  renderHomeScreen() {    
+    const {drink,allOrders} = this.state
+
+    console.log(allOrders)
+
+    return <div className="HomeScreen">
+      <div className="Drinks">
+        <h3>Dranken</h3>
+        <input type="button" value="Zwart" onClick={(pick) => this.handleClick('Zwart')} />
+        <input type="button" value="Espresso" onClick={(pick) => this.handleClick('Espresso')} />
+        <input type="button" value="Cappuccino" onClick={(pick) => this.handleClick('Cappuccino')} />
+        <input type="button" value="Heet water" onClick={(pick) => this.handleClick('Heet water')} />
+      </div>
+      {allOrders} 
+      <div className="Orderbutton">
+        <input type="button" value="Bestellen" onClick={this.handleOrder} />
+      </div>
+      <div>
+       <h3>Bestellingen</h3>
+        <table className="AllGroupsTable">
+          <thead>
+            <tr>
+              <th><b>Gebruiker</b></th>
+              <th><b>Groep</b></th>
+              <th><b>Drank</b></th>
+            </tr>
+          </thead>
+          <tbody>
+            {allOrders.map((order) => <tr><td>{order.user}</td><td>{order.group}</td><td>{order.drink}</td></tr>)}
+          </tbody>
+        </table>
+       </div>
     </div>
   }
 
-  renderUsers() {
-    const {users} = this.state;
+  handleClick = async (pick) => {
+    this.setState({
+      drink: pick
+    })
+  }
 
-    return <table>
-      <thead>
-        <td>Gebruikersnaam</td>
-        <td>Wachtwoord</td>
-      </thead>
-      <body>
-        {users.map((user) => <tr><td>{user.username}</td><td>{user.password}</td></tr>)}
-      </body>
-    </table>;
+  handleOrder = () => {
+    //Stuur shit naar Mongo.
   }
 }
 
 export default HomeScreen;
+
+
