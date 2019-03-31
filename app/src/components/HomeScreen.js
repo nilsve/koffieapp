@@ -68,7 +68,6 @@ class HomeScreen extends React.Component {
           </Grid>
         </Grid>
       </Grid>
-
     </div>
   }
 
