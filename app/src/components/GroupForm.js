@@ -1,22 +1,31 @@
+import './GroupForm.scss';
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
-
 import {groupApi, userApi} from 'apis';
 
-class GroupForm extends React.Component {
+// Material
+import {
+  Paper, Grid,                                                // Backgrounds
+  Button, IconButton , TextField,                             // Buttons
+  FormControl, Select, InputLabel, OutlinedInput, MenuItem,   // Select Lists
+  Table, TableBody, TableCell, TableHead, TableRow,           // Tables
+  Typography
+} from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
 
+class GroupForm extends React.Component {
   state = {
     username: '',
     allUsers: [],
     allGroups: [],
-    userGroups: [],
+    currentGroup: [],
     newGroupname: '',
     currentGroupname: '',
     newUser: '',
     status: 'notInGroup', // inGroup/notInGroup
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.refreshTables()
   }
 
@@ -27,62 +36,110 @@ class GroupForm extends React.Component {
   }
 
   renderBody(authData) {
-    const {allGroups, allUsers, userGroups, newGroupname, currentGroupname, status} = this.state
+    const {allGroups, allUsers, currentGroup, newGroupname, currentGroupname, status} = this.state
     let formContent
-    let ableToRender
-
-    if (userGroups === undefined) ableToRender = true
 
     if (status === 'notInGroup') {
       formContent = <div>
-        <h3>Nieuwe groep maken</h3>
-          <input type="text" placeholder="Groepsnaam" value={newGroupname} onChange={this.handleUpdateField('newGroupname')} />
-          <input type="submit" value="Aanmaken" onClick={(e) => this.handleGroupRegistration(e, authData)}/>
-        </div>
+          <TextField
+            style={{ width: 180}}
+            variant="outlined"
+            label="Naam"
+            onChange={this.handleUpdateField('newGroupname')}
+            >
+            {newGroupname}
+          </TextField>
+          <IconButton justify="right" onClick={(e) => this.handleGroupRegistration(e, authData)}>
+            <AddIcon/>
+          </IconButton>
+      </div>
     } else {
       formContent = <div>
-        <h3>{ableToRender && 'Je zit in groep: ' + currentGroupname}</h3>
-          <select className="newUser" onChange={this.handleUpdateField('newUser')}>
-            {allUsers.map((user) => <option key={user._id}>{user.username}</option>)}
-          </select>
-          <input type="submit" value="Toevoegen" onClick={(e) => this.addUser(e, authData)}/>
-        </div>
+            <FormControl variant="outlined">
+            <InputLabel
+              ref={ref => {
+                this.InputLabelRef = ref;
+              }}
+            >
+            &nbsp;Gebruikers
+            </InputLabel>
+            <Select
+              style={{ width: 180}}
+              value={this.state.newUser}
+              onChange={this.handleUpdateField('newUser')}
+              input={
+                <OutlinedInput
+                  labelWidth={90}
+                />
+              }
+            >
+              {allUsers.map((user) => <MenuItem value={user._id}>{user.username}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <IconButton onClick={(e) => this.addUser(e, authData)}>
+              <AddIcon/>
+          </IconButton>
+      </div>
     }
 
+    console.log('allGroups.members: ', allGroups)
 
     return <div className="GroupForm">
-      <form className="GroupForm_form">
-      <h2>Groepen</h2>
-      {formContent}
-      </form>
-      <h3>Groepsleden</h3>
-      <div className="UserGroupsTable">
-        <table>
-          <thead>
-            <tr>
-              <th><b>Leden</b></th>
-            </tr>
-          </thead>
-          <tbody>
-            {userGroups.map((group) => <tr><td>{group.members}</td></tr>)}
-          </tbody>
-        </table>
+        <Grid container className="container" spacing={40}>
+          <Grid item xs={4}>
+            <Typography variant="h5" gutterBottom>Groepen</Typography>
+            <Paper className="PaperForm" elevation={2}>
+              {formContent}
+            </Paper>
+          </Grid>
+          <Grid item xs={3}>
+            { currentGroupname != undefined && <Typography variant="h5" gutterBottom>{currentGroupname}</Typography>}
+            { currentGroup.members != undefined &&
+            <Paper>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Leden</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {currentGroup.members.map(member => (
+                    <TableRow group={member}>
+                      <TableCell component="th" scope="row">
+                        {member}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+            }
+            </Grid>
+            <Grid item xs={5}>
+            { allGroups.length > 0 && <Typography variant="h5" gutterBottom>Alle groepen</Typography>}
+            { allGroups.length > 0 && <Paper>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Groep</TableCell>
+                    <TableCell align="right">Leden</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {allGroups.map(group => (
+                    <TableRow group={group._id}>
+                      <TableCell component="th" scope="row">
+                        {group.name}
+                      </TableCell>
+                      <TableCell align="right">{group.members.join(', ')}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>}
+          </Grid>
+        </Grid>
       </div>
-      <div>
-       <h3>Alle groepen</h3>
-        <table className="AllGroupsTable">
-          <thead>
-            <tr>
-              <th><b>Groep</b></th>
-              <th><b>Leden</b></th>
-            </tr>
-          </thead>
-          <tbody>
-            {allGroups.map((group) => <tr><td>{group.name}</td><td>{group.members.join(', ')}</td></tr>)}
-          </tbody>
-        </table>
-       </div>
-    </div>;
   }
 
   handleGroupRegistration = async (e, authData) => {
@@ -112,21 +169,25 @@ class GroupForm extends React.Component {
   }
 
   refreshTables = async () => {
-    // const userGroupsResult  = await groupApi.getUserGroup()
-    const allGroupsResult   = await groupApi.getGroups()
-    const allUserResult     = await userApi.getUsers()
+    try {
+      const currentGroupResult  = await groupApi.getUserGroup()
+      const allGroupsResult     = await groupApi.getGroups()
+      const allUserResult       = await userApi.getUsers()
 
-    // console.log('userGroupsResult: ', userGroupsResult)
+      console.log('refreshTables: ', currentGroupResult)
 
-    this.setState({
-      // userGroups      : userGroupsResult,
-      // currentGroupname: userGroupsResult[0].name,
-      allGroups       : allGroupsResult,
-      allUsers        : allUserResult,
-    })
+      this.setState({
+        currentGroup    : currentGroupResult[0],
+        currentGroupname: currentGroupResult[0].name,
+        allGroups       : allGroupsResult,
+        allUsers        : allUserResult,
+      })
 
-    // if (userGroupsResult.length > 0) this.setState({ status: 'inGroup'})
-  	// else this.setState({ status: 'notInGroup' })
+      if (currentGroupResult.length > 0) this.setState({ status: 'inGroup'})
+      else this.setState({ status: 'notInGroup' })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   handleUpdateField = fieldName => e => {

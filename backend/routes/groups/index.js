@@ -23,7 +23,7 @@ router.get('/userGroups', async (req, res) => {
   console.log('userInfo: ', userInfo)
 
   try {
-    let response = await collection.find({ members: userInfo._id }).toArray()
+    let response = await collection.find({ members: 'Indy' }).toArray()
     res.status(200).json(response);
   } catch(error) {
     console.log(error)
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
 
 // Update group
 // TODO: ook nog de naam van de groep meenemen
-router.put('/:id', async (req, res) => {
+router.put('/', async (req, res) => {
     let collection = req.app.locals.groupsCollection
 
     try {

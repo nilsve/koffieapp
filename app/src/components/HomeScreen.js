@@ -32,23 +32,17 @@ class HomeScreen extends React.Component {
     </AuthConsumer>;
   }
 
-  handleChange = key => (value) => {
-    this.setState({
-      [key]: value,
-    });
-  };
-
   renderBody(authData) {
-    const { drinks, spacing } = this.state
+    const { drinks } = this.state
 
     return <div className="HomeScreen">
-      <h1>Welkom {authData.userInfo.username}</h1>
+      <Typography component="h4" variant="h2" gutterBottom>Welkom {authData.userInfo.username}</Typography>
       <Grid container className="container" spacing={40}>
         <Grid item xs={12}>
           <Grid container className="drinks" justify="center" spacing={40}>
             {drinks.map((drink) => (
               <Grid key={drink.drink} item>
-                <Card>
+                <Card elevation={3}>
                   <CardContent>
                     <Typography variant="h5" component="h2">
                       {drink.drink}

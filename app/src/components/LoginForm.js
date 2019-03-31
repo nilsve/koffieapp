@@ -3,8 +3,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
 import {authApi} from 'apis';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
+import {Button, TextField} from '@material-ui/core'
 
 class LoginForm extends Component {
   static propTypes = {
@@ -72,7 +71,7 @@ class LoginForm extends Component {
     try {
       await authApi.register(newUsername, newPassword);
     } catch (err) {
-      
+
     }
   }
 
