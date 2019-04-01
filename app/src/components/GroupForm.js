@@ -6,27 +6,30 @@ import {groupApi, userApi} from 'apis';
 // Material
 import {
   Paper, Grid,                                                // Backgrounds
-  Button, IconButton , TextField,                             // Buttons
+  Button, TextField,                                          // Buttons
   FormControl, Select, InputLabel, OutlinedInput, MenuItem,   // Select Lists
   Table, TableBody, TableCell, TableHead, TableRow,           // Tables
   Typography
 } from '@material-ui/core'
-import AddIcon from '@material-ui/icons/Add';
 
 class GroupForm extends React.Component {
   state = {
-    username: '',
-    allUsers: [],
-    allGroups: [],
-    currentGroup: [],
-    newGroupname: '',
+    username        : '',
+    allUsers        : [],
+    membersToAdd    : [],
+    allGroups       : [],
+    currentGroup    : [],
     currentGroupname: '',
-    newUser: '',
-    status: 'notInGroup', // inGroup/notInGroup
+    members         : [],
+    membersToRemove : [],
+    newGroupname    : '',
+    userToAdd       : '',
+    userToRemove    : '',
+    status          : 'notInGroup', // inGroup/notInGroup
   }
 
   componentDidMount() {
-    this.refreshTables()
+    this.refreshData()
   }
 
   render() {
@@ -36,11 +39,21 @@ class GroupForm extends React.Component {
   }
 
   renderBody(authData) {
-    const {allGroups, allUsers, currentGroup, newGroupname, currentGroupname, status} = this.state
+    const {
+      allGroups,
+      membersToAdd,
+      members,
+      membersToRemove,
+      newGroupname,
+      currentGroupname,
+      userToAdd,
+      userToRemove,
+      status,
+    } = this.state
     let formContent
 
     if (status === 'notInGroup') {
-      formContent = <div>
+      formContent = <Grid item xs={12}>
           <TextField
             style={{ width: 180}}
             variant="outlined"
@@ -49,52 +62,78 @@ class GroupForm extends React.Component {
             >
             {newGroupname}
           </TextField>
-          <IconButton justify="right" onClick={(e) => this.handleGroupRegistration(e, authData)}>
-            <AddIcon/>
-          </IconButton>
-      </div>
+        <Button fullWidth onClick={(e) => this.handleGroupRegistration(e, authData)}>
+        Aanmaken
+        </Button>
+      </Grid>
     } else {
-      formContent = <div>
-            <FormControl variant="outlined">
-            <InputLabel
-              ref={ref => {
-                this.InputLabelRef = ref;
-              }}
-            >
-            &nbsp;Gebruikers
-            </InputLabel>
-            <Select
-              style={{ width: 180}}
-              value={this.state.newUser}
-              onChange={this.handleUpdateField('newUser')}
-              input={
-                <OutlinedInput
-                  labelWidth={90}
-                />
-              }
-            >
-              {allUsers.map((user) => <MenuItem value={user._id}>{user.username}</MenuItem>)}
-            </Select>
-          </FormControl>
-          <IconButton onClick={(e) => this.addUser(e, authData)}>
-              <AddIcon/>
-          </IconButton>
-      </div>
+      formContent = <Grid item xs={12}>
+          { membersToAdd !== undefined && membersToAdd.length > 0 &&
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined" >
+              <InputLabel
+                ref={ref => {
+                  this.InputLabelRef = ref;
+                }}
+              >
+              Lid toevoegen
+              </InputLabel>
+              <Select
+                value={userToAdd}
+                onChange={this.handleUpdateField('userToAdd')}
+                input={
+                  <OutlinedInput
+                    labelWidth={102}
+                  />
+                }
+              >
+              {membersToAdd.map((user) => <MenuItem value={user._id}>{user.username}</MenuItem>)}
+              </Select>
+            </FormControl>
+            <Button fullWidth onClick={(e) => this.addMember(e, authData)}>
+            Toevoegen
+            </Button>
+          </Grid>
+          }
+          { membersToRemove !== undefined && membersToRemove.length > 0 &&
+            <Grid item xs={12}>
+              <FormControl fullWidth variant="outlined">
+                <InputLabel
+                  ref={ref => {
+                    this.InputLabelRef = ref;
+                  }}
+                >
+                Lid verwijderen
+                </InputLabel>
+                <Select
+                  value={userToRemove}
+                  onChange={this.handleUpdateField('userToRemove')}
+                  input={
+                    <OutlinedInput
+                      labelWidth={108}
+                    />
+                  }
+                >
+                {membersToRemove.map((user) => <MenuItem value={user}>{user}</MenuItem>)}
+                </Select>
+              </FormControl>
+              <Button fullWidth onClick={(e) => this.removeMember(e, authData)}>
+              Verwijderen
+              </Button>
+            </Grid>
+          }
+        </Grid>
     }
-
-    console.log('allGroups.members: ', allGroups)
 
     return <div className="GroupForm">
         <Grid container className="container" spacing={40}>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Typography variant="h5" gutterBottom>Groepen</Typography>
-            <Paper className="PaperForm" elevation={2}>
               {formContent}
-            </Paper>
           </Grid>
           <Grid item xs={3}>
-            { currentGroupname != undefined && <Typography variant="h5" gutterBottom>{currentGroupname}</Typography>}
-            { currentGroup.members != undefined &&
+            { currentGroupname !== undefined && <Typography variant="h5" gutterBottom>{currentGroupname}</Typography>}
+            { members !== undefined && members.length > 0 &&
             <Paper>
               <Table>
                 <TableHead>
@@ -103,7 +142,7 @@ class GroupForm extends React.Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {currentGroup.members.map(member => (
+                  {members.map(member => (
                     <TableRow group={member}>
                       <TableCell component="th" scope="row">
                         {member}
@@ -115,7 +154,7 @@ class GroupForm extends React.Component {
             </Paper>
             }
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
             { allGroups.length > 0 && <Typography variant="h5" gutterBottom>Alle groepen</Typography>}
             { allGroups.length > 0 && <Paper>
               <Table>
@@ -149,42 +188,60 @@ class GroupForm extends React.Component {
     try {
       await groupApi.insertGroup(newGroupname, authData.userInfo.username)
 
-      this.refreshTables(authData)
+      this.refreshData(authData)
     } catch (error) {
       console.log(error)
     }
   }
 
-  addUser = async (e, authData) => {
+  addMember = async (e, authData) => {
     e.preventDefault()
-    const {currentGroupname, newUser} = this.state
+    const {currentGroupname, userToAdd} = this.state
 
     try {
-      await groupApi.addUser(currentGroupname, newUser)
-
-      this.refreshTables(authData)
+      await groupApi.addMember(currentGroupname, userToAdd)
+      this.refreshData(authData)
     } catch (error) {
       console.log(error)
     }
   }
 
-  refreshTables = async () => {
-    try {
-      const currentGroupResult  = await groupApi.getUserGroup()
-      const allGroupsResult     = await groupApi.getGroups()
-      const allUserResult       = await userApi.getUsers()
+  removeMember = async (e, authData) => {
+    e.preventDefault()
+    const {currentGroupname, userToRemove} = this.state
 
-      console.log('refreshTables: ', currentGroupResult)
+    try {
+      await groupApi.removeMember(currentGroupname, userToRemove)
+      this.refreshData(authData)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  refreshData = async () => {
+    try {
+      // Haal alle data op en
+      const group           = await groupApi.getUserGroup()
+      const members         = group[0].members
+      const membersToRemove = [...members]
+      membersToRemove.shift()
+      const allGroups       = await groupApi.getGroups()
+      const allUsers        = await userApi.getUsers()
+      const membersToAdd    = await allUsers.filter( user => { return members.indexOf(user._id) === -1 });
 
       this.setState({
-        currentGroup    : currentGroupResult[0],
-        currentGroupname: currentGroupResult[0].name,
-        allGroups       : allGroupsResult,
-        allUsers        : allUserResult,
+        allUsers        : allUsers,
+        membersToAdd    : membersToAdd,
+        allGroups       : allGroups,
+        currentGroup    : group[0],
+        members         : members,
+        membersToRemove : membersToRemove,
+        currentGroupname: group[0].name,
       })
 
-      if (currentGroupResult.length > 0) this.setState({ status: 'inGroup'})
+      if (group.length > 0) this.setState({ status: 'inGroup'})
       else this.setState({ status: 'notInGroup' })
+
     } catch (error) {
       console.log(error)
     }

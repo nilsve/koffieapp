@@ -10,27 +10,27 @@ export default class GroupApi extends BaseApi {
   }
 
   getUserGroup() {
-    return this.getJson('userGroups')
+    return this.getJson('user-group')
   }
 
-  insertGroup(groupName, userId) {
+  insertGroup(groupId, userId) {
     return this.postJson(
       '',
-      {
-        _id     : groupName,
-        name    : groupName,
-        creator : userId,
-        members : [
-          userId
-        ]
-      }
+      { _id: groupId, member: userId}
     )
   }
 
-  addUser(groupId, userId) {
+  addMember(groupId, userId) {
     return this.putJson(
-      '',
-      { _id: groupId, newMember: userId }
+      'add-user',
+      { _id: groupId, member: userId }
+    )
+  }
+
+  removeMember(groupId, userId) {
+    return this.putJson(
+      'remove-user',
+      { _id: groupId, member: userId }
     )
   }
 }
