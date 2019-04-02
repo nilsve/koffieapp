@@ -74,14 +74,13 @@ router.put('/:id', async (req, res) => {
 })
 
 // Delete user
-router.delete('/:id', async (req, res) => {
+router.delete('/', async (req, res) => {
     let collection = req.app.locals.usersCollection;
-    let id = ObjectId(req.params.id)
 
     try {
-        collection.deleteOne({ _id : id })
-        let allUsers = await collection.find({}).toArray()
-        res.status(200).json(allUsers)
+        collection.deleteOne({ _id : req.body._id })
+        let response = await collection.find({}).toArray()
+        res.status(200).json(response)
     } catch(error) {
         console.log(error)
         res.status(500)

@@ -30,7 +30,7 @@ router.get('/user-group', async (req, res) => {
 })
 
 // Make new group
-router.post('/', async (req, res) => {
+router.post('/insert', async (req, res) => {
   let collection = req.app.locals.groupsCollection
 
   try {
@@ -83,6 +83,22 @@ router.put('/remove-user', async (req, res) => {
     console.log(error)
     res.status(500)
   }
+})
+
+// Delete group
+router.post('/delete', async (req, res) => {
+    let collection = req.app.locals.groupsCollection;
+
+    console.log('req.body._id: ', req.body)
+
+    try {
+        collection.deleteOne({ _id : req.body._id })
+        let response = await collection.find({}).toArray()
+        res.status(200).json(response)
+    } catch(error) {
+        console.log(error)
+        res.status(500)
+    }
 })
 
 module.exports = router

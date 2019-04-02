@@ -9,7 +9,7 @@ import {
   Button, TextField,                                          // Buttons
   FormControl, Select, InputLabel, OutlinedInput, MenuItem,   // Select Lists
   Table, TableBody, TableCell, TableHead, TableRow,           // Tables
-  Typography
+  Typography                                                  // Text
 } from '@material-ui/core'
 
 class GroupForm extends React.Component {
@@ -52,6 +52,7 @@ class GroupForm extends React.Component {
     } = this.state
     let formContent
 
+    // Determining which screen to put out based on status state variable (inGroup/notInGroup)
     if (status === 'notInGroup') {
       formContent = <Grid item xs={12}>
           <TextField
@@ -62,67 +63,72 @@ class GroupForm extends React.Component {
             >
             {newGroupname}
           </TextField>
-        <Button fullWidth onClick={(e) => this.handleGroupRegistration(e, authData)}>
+        <Button fullWidth onClick={(e) => this.insertGroup(e, authData)}>
         Aanmaken
         </Button>
       </Grid>
     } else {
       formContent = <Grid item xs={12}>
-          { membersToAdd !== undefined && membersToAdd.length > 0 &&
-            <Grid item xs={12}>
-              <FormControl fullWidth variant="outlined" >
+        { membersToAdd !== undefined && membersToAdd.length > 0 &&
+          <Grid item xs={12}>
+            <FormControl fullWidth variant="outlined" >
+            <InputLabel
+              ref={ref => {
+                this.InputLabelRef = ref;
+              }}
+            >
+            Lid toevoegen
+            </InputLabel>
+            <Select
+              value={userToAdd}
+              onChange={this.handleUpdateField('userToAdd')}
+              input={
+                <OutlinedInput
+                  labelWidth={102}
+                />
+              }
+            >
+            {membersToAdd.map((user) => <MenuItem value={user._id}>{user.username}</MenuItem>)}
+            </Select>
+          </FormControl>
+          <Button fullWidth onClick={(e) => this.addMember(e, authData)}>
+          Toevoegen
+          </Button>
+        </Grid>
+        }
+        { membersToRemove !== undefined && membersToRemove.length > 0 &&
+          <Grid item xs={12}>
+            <FormControl fullWidth variant="outlined">
               <InputLabel
                 ref={ref => {
                   this.InputLabelRef = ref;
                 }}
               >
-              Lid toevoegen
+              Lid verwijderen
               </InputLabel>
               <Select
-                value={userToAdd}
-                onChange={this.handleUpdateField('userToAdd')}
+                value={userToRemove}
+                onChange={this.handleUpdateField('userToRemove')}
                 input={
                   <OutlinedInput
-                    labelWidth={102}
+                    labelWidth={108}
                   />
                 }
               >
-              {membersToAdd.map((user) => <MenuItem value={user._id}>{user.username}</MenuItem>)}
+              {membersToRemove.map((user) => <MenuItem value={user}>{user}</MenuItem>)}
               </Select>
             </FormControl>
-            <Button fullWidth onClick={(e) => this.addMember(e, authData)}>
-            Toevoegen
+            <Button fullWidth onClick={(e) => this.removeMember(e, authData)}>
+            Verwijderen
             </Button>
           </Grid>
-          }
-          { membersToRemove !== undefined && membersToRemove.length > 0 &&
-            <Grid item xs={12}>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel
-                  ref={ref => {
-                    this.InputLabelRef = ref;
-                  }}
-                >
-                Lid verwijderen
-                </InputLabel>
-                <Select
-                  value={userToRemove}
-                  onChange={this.handleUpdateField('userToRemove')}
-                  input={
-                    <OutlinedInput
-                      labelWidth={108}
-                    />
-                  }
-                >
-                {membersToRemove.map((user) => <MenuItem value={user}>{user}</MenuItem>)}
-                </Select>
-              </FormControl>
-              <Button fullWidth onClick={(e) => this.removeMember(e, authData)}>
-              Verwijderen
-              </Button>
-            </Grid>
-          }
-        </Grid>
+        }
+        {members.length > 0 &&
+        <Button fullWidth onClick={(e) => this.removeGroup(e, authData)}>
+        Groep verwijderen
+        </Button>
+        }
+      </Grid>
     }
 
     return <div className="GroupForm">
@@ -161,6 +167,7 @@ class GroupForm extends React.Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Groep</TableCell>
+                    <TableCell>Oprichter</TableCell>
                     <TableCell align="right">Leden</TableCell>
                   </TableRow>
                 </TableHead>
@@ -170,6 +177,7 @@ class GroupForm extends React.Component {
                       <TableCell component="th" scope="row">
                         {group.name}
                       </TableCell>
+                      <TableCell align="right">{group.creator}</TableCell>
                       <TableCell align="right">{group.members.join(', ')}</TableCell>
                     </TableRow>
                   ))}
@@ -181,15 +189,31 @@ class GroupForm extends React.Component {
       </div>
   }
 
-  handleGroupRegistration = async (e, authData) => {
+  insertGroup = async (e, authData) => {
     e.preventDefault()
     const {newGroupname} = this.state
 
     try {
       await groupApi.insertGroup(newGroupname, authData.userInfo.username)
-
       this.refreshData(authData)
     } catch (error) {
+      // TODO: Error dialog?
+      console.log(error)
+    }
+  }
+
+  removeGroup = async (e, authData) => {
+    e.preventDefault()
+    const {currentGroupname} = this.state
+
+    try {
+      await groupApi.removeGroup(currentGroupname)
+      this.refreshData(authData)
+      this.setState({
+        status: 'notInGroup',
+      })
+    } catch (error) {
+      // TODO: Error dialog?
       console.log(error)
     }
   }
@@ -202,6 +226,7 @@ class GroupForm extends React.Component {
       await groupApi.addMember(currentGroupname, userToAdd)
       this.refreshData(authData)
     } catch (error) {
+      // TODO: Error dialog?
       console.log(error)
     }
   }
@@ -214,21 +239,41 @@ class GroupForm extends React.Component {
       await groupApi.removeMember(currentGroupname, userToRemove)
       this.refreshData(authData)
     } catch (error) {
+      // TODO: Error dialog?
       console.log(error)
     }
   }
 
   refreshData = async () => {
     try {
-      // Haal alle data op en
-      const group           = await groupApi.getUserGroup()
-      const members         = group[0].members
-      const membersToRemove = [...members]
-      membersToRemove.shift()
-      const allGroups       = await groupApi.getGroups()
-      const allUsers        = await userApi.getUsers()
-      const membersToAdd    = await allUsers.filter( user => { return members.indexOf(user._id) === -1 });
+      // Get all data from API's
+      const group     = await groupApi.getUserGroup()
+      const allGroups = await groupApi.getGroups()
+      const allUsers  = await userApi.getUsers()
+      // Variables for member data
+      let members;
+      let membersToRemove;
+      let membersToAdd;
 
+      try {
+        // Determine member data based on API-data
+        members         = group[0].members
+        membersToRemove = [...members]
+        // Shift the first member (creator), who cannot be removed from group
+        membersToRemove.shift()
+        // Filter members out of all user
+        membersToAdd    = await allUsers.filter( user => { return members.indexOf(user._id) === -1 })
+      } catch {
+        // If something went wrong determing member data, make arrays empty
+        // TODO: Error dialog?
+        this.setState({
+          members         : [],
+          membersToRemove : [],
+          membersToAdd    : [],
+        })
+      }
+
+      // Set state
       this.setState({
         allUsers        : allUsers,
         membersToAdd    : membersToAdd,
@@ -239,10 +284,19 @@ class GroupForm extends React.Component {
         currentGroupname: group[0].name,
       })
 
+      // Determine which screen to display
       if (group.length > 0) this.setState({ status: 'inGroup'})
       else this.setState({ status: 'notInGroup' })
 
     } catch (error) {
+      // Something went wrong getting API data or setting it, make arrays empty
+      // TODO: Error dialog?
+      this.setState({
+        allUsers        : [],
+        allGroups       : [],
+        currentGroup    : [],
+        currentGroupname: [],
+      })
       console.log(error)
     }
   }
