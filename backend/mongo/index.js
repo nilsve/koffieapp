@@ -4,11 +4,13 @@ const mongo_uri = 'mongodb://localhost:27017';
 class Database {
   mongo = null;
   usersCollection = null;
+  groupsCollection = null;
 
   constructor(mongo) {
     this.mongo = mongo;
 
     this.usersCollection = mongo.collection('users');
+    this.groupsCollection = mongo.collection('groups');
   }
 }
 
