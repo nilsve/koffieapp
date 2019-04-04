@@ -12,4 +12,8 @@ export default class OrderApi extends BaseApi {
   getOrders() {
     return this.getJson('')
   }
+
+  order(pick, milk, sugar, group) {
+    return this.postJson('', {pick, milk, sugar, group});
+  }
 }

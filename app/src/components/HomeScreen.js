@@ -1,73 +1,125 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
-import {userApi,orderApi} from 'apis';
+import {userApi, orderApi} from 'apis';
+import {Typography, Grid, Card, CardContent, Button, ButtonBase} from '@material-ui/core';
+import Slider from '@material-ui/lab/Slider';
 
 class HomeScreen extends React.Component {
 
   state = {
-    drink: '',
-    group: '',
-    allOrders: [],
+    users: [],
+    drinks: [],
+    choice: '',
+    milk: 0,
+    sugar: 0,
   }
 
   async componentDidMount() {
-    const result = orderApi.getOrders()
-    console.log(result)
+    const result = await userApi.getUsers();
     this.setState({
-      allOrders:result
+      users: result,
+      drinks: [
+        {drink: 'Koffie', desc: 'Gewoon zwarte koffie'},
+        {drink: 'Cappucino', desc: 'Romig met een shot espresso'},
+        {drink: 'Latte Macchiato', desc: 'Heel veel melk en espresso'},
+        {drink: 'Latte', desc: 'Veel te veel melk'},
+        {drink: 'Heet Water', desc: 'Zie titel'},
+      ]
     })
   }
 
   render() {
-    return this.renderHomeScreen()
+    return <AuthConsumer>
+      {(authData) => this.renderBody(authData)}
+    </AuthConsumer>;
   }
 
-  renderHomeScreen() {    
-    const {drink,allOrders} = this.state
+  handleChange = key => (value) => {
+    this.setState({
+      [key]: value,
+    });
+  };
 
-    console.log(allOrders)
-
+  renderBody(authData) {
+    const {drinks, milk, sugar} = this.state
     return <div className="HomeScreen">
-      <div className="Drinks">
-        <h3>Dranken</h3>
-        <input type="button" value="Zwart" onClick={(pick) => this.handleClick('Zwart')} />
-        <input type="button" value="Espresso" onClick={(pick) => this.handleClick('Espresso')} />
-        <input type="button" value="Cappuccino" onClick={(pick) => this.handleClick('Cappuccino')} />
-        <input type="button" value="Heet water" onClick={(pick) => this.handleClick('Heet water')} />
-      </div>
-      {allOrders} 
-      <div className="Orderbutton">
-        <input type="button" value="Bestellen" onClick={this.handleOrder} />
-      </div>
-      <div>
-       <h3>Bestellingen</h3>
-        <table className="AllGroupsTable">
-          <thead>
-            <tr>
-              <th><b>Gebruiker</b></th>
-              <th><b>Groep</b></th>
-              <th><b>Drank</b></th>
-            </tr>
-          </thead>
-          <tbody>
-            {allOrders.map((order) => <tr><td>{order.user}</td><td>{order.group}</td><td>{order.drink}</td></tr>)}
-          </tbody>
-        </table>
-       </div>
+      <h1>Welkom {authData.userInfo.username}</h1>
+      <Grid container className="container" spacing={40}>
+        <Grid item xs={6}>
+          <Grid container className="drinks" justify="flex-start" spacing={40}>
+            {drinks.map((drink) => this.renderCard(drink))}
+          </Grid>
+        </Grid>
+        <Grid item xs={6}>
+          <Grid container className="sliders" justify="center" spacing={40}>
+            <Typography variant="h5" component="h2">
+              Melk: {milk}
+            </Typography>
+            <Slider
+              value={milk}
+              min={0}
+              max={3}
+              step={1}
+              onChange={(e, value) => this.setState({milk: value})}
+            />
+            <Typography variant="h5" component="h2">
+              Suiker: {sugar}
+            </Typography>
+            <Slider
+              value={sugar}
+              min={0}
+              max={3}
+              step={1}
+              onChange={(e, value) => this.setState({sugar: value})}
+            />
+          </Grid>
+        </Grid>
+        <Grid container className="button" justify="center">
+          <Button variant="contained" disabled={!this.state.choice} onClick={this.handleClick}>
+            Bestellen
+          </Button>
+        </Grid>
+      </Grid>
     </div>
   }
 
-  handleClick = async (pick) => {
+  renderCard(drink) {
+    const style = {
+      backgroundColor: this.state.choice === drink.drink ? 'lightgrey' : null,
+    };
+
+    return <Grid key={drink.drink} item>
+      <Card style={style}>
+        <ButtonBase onClick={() => this.handleToggleDrink(drink.drink)}>
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              {drink.drink}
+            </Typography>
+            <Typography color="textSecondary">
+              {drink.desc}
+            </Typography>
+          </CardContent>
+        </ButtonBase>
+      </Card>
+    </Grid>;
+  }
+
+  handleToggleDrink = drink => {
+    console.log(drink)
     this.setState({
-      drink: pick
+      choice: this.state.choice !== drink ? drink : null,
     })
   }
 
-  handleOrder = () => {
-    //Stuur shit naar Mongo.
+  handleClick = async () => {
+    const {choice, milk, sugar} = this.state
+    const group = '1'
+    try {
+      await orderApi.order(choice, milk, sugar, group);
+    } catch (err) {
+
+    }
   }
 }
 
 export default HomeScreen;
-
-
