@@ -15,9 +15,10 @@ import {
 class GroupForm extends React.Component {
   state = {
     username        : '',
-    allUsers        : [],
+    allUsers        : {},
+    group           : {},
+    allGroups       : {},
     membersToAdd    : [],
-    allGroups       : [],
     currentGroup    : [],
     currentGroupname: '',
     members         : [],
@@ -172,7 +173,7 @@ class GroupForm extends React.Component {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {allGroups.map(group => (
+                  {Object.values(allGroups).map(group => (
                     <TableRow group={group._id}>
                       <TableCell component="th" scope="row">
                         {group.name}
@@ -250,6 +251,7 @@ class GroupForm extends React.Component {
       const group     = await groupApi.getUserGroup()
       const allGroups = await groupApi.getGroups()
       const allUsers  = await userApi.getUsers()
+
       // Variables for member data
       let members;
       let membersToRemove;
@@ -257,7 +259,7 @@ class GroupForm extends React.Component {
 
       try {
         // Determine member data based on API-data
-        members         = group[0].members
+        members         = group.members
         membersToRemove = [...members]
         // Shift the first member (creator), who cannot be removed from group
         membersToRemove.shift()
@@ -278,14 +280,14 @@ class GroupForm extends React.Component {
         allUsers        : allUsers,
         membersToAdd    : membersToAdd,
         allGroups       : allGroups,
-        currentGroup    : group[0],
+        currentGroup    : group,
         members         : members,
         membersToRemove : membersToRemove,
-        currentGroupname: group[0].name,
+        currentGroupname: group.name,
       })
 
       // Determine which screen to display
-      if (group.length > 0) this.setState({ status: 'inGroup'})
+      if (Object.values(group).length > 0) this.setState({ status: 'inGroup'})
       else this.setState({ status: 'notInGroup' })
 
     } catch (error) {

@@ -7,7 +7,7 @@ router.get('/', async (req, res) => {
     let collection = req.app.locals.usersCollection;
 
     try {
-        let response = await collection.find({}).toArray();
+        let response = await collection.find({}).toArray()
         res.status(200).json(response);
     } catch (error) {
         console.log(error);
@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
             email   : req.body.email,
             status  : 'active'
         })
-        let allUsers = await collection.find({ _id : id }).toArray()
+        let allUsers = await collection.find({ _id : id })
         res.status(200).json(allUsers)
     } catch (error) {
         console.log(error)
