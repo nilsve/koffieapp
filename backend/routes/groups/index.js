@@ -30,15 +30,15 @@ router.get('/user-group', async (req, res) => {
 
 // Make new group
 router.post('/insert', async (req, res) => {
-  let collection = req.app.locals.groupsCollection
-
+  const collection = req.app.locals.groupsCollection
+  const {username} = res.locals.userInfo;
   try {
     collection.insertOne({
         _id     : req.body._id,
         name    : req.body._id,
-        creator : req.body.member,
+        creator : username,
         members : [
-          req.body.member
+          username
         ]
       }
     )
