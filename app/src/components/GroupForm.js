@@ -200,6 +200,7 @@ class GroupForm extends React.Component {
       this.refreshData()
       this.setState({
         group: null,
+        members: null,
       })
     } catch (error) {
       // TODO: Error dialog?
