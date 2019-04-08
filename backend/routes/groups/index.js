@@ -1,101 +1,49 @@
-const express = require('express')
+import express from 'express';
+
 const router = express.Router()
 
 // Get all groups
 router.get('/', async (req, res) => {
-  let collection = req.app.locals.groupsCollection;
-
-  try {
-    let response = await collection.find({}).toArray()
-    res.status(200).json(response);
-  } catch (error) {
-    console.log(error);
-    res.status(500)
-  }
+  const groups = await res.locals.db.groupsCollection.getAllGroups();
+  return res.json(groups)
 })
 
 // Get user's group
 router.get('/user-group', async (req, res) => {
-  let collection = req.app.locals.groupsCollection
+  const {userInfo} = res.locals;
+  const result = await res.locals.db.groupsCollection.findUserGroup(userInfo.username);
+  return res.json(result);
+})
+
+// Set user to group
+router.post('/user-group', async (req, res) => {
   const userinfo = res.locals.userInfo;
 
-  try {
-    let response = await collection.findOne({ members: userinfo.username})
-    res.status(200).json(response);
-  } catch(error) {
-    console.log(error)
-    res.status(500)
-  }
+  await res.locals.db.groupsCollection.addMember(userinfo.username, req.body.groupName);
+
+  return res.json({});
 })
 
 // Make new group
-router.post('/insert', async (req, res) => {
-  const collection = req.app.locals.groupsCollection
+router.post('/', async (req, res) => {
   const {username} = res.locals.userInfo;
-  try {
-    collection.insertOne({
-        _id     : req.body._id,
-        name    : req.body._id,
-        creator : username,
-        members : [
-          username
-        ]
-      }
-    )
-    let response = await collection.findOne({})
-    res.status(200).json(response)
-  } catch (error) {
-    console.log(error)
-    res.status(500)
-  }
-})
-
-// Add user to group
-router.put('/add-user', async (req, res) => {
-  let collection = req.app.locals.groupsCollection
-
-  try {
-    await collection.updateOne(
-      { _id: req.body._id },
-      { $addToSet: { members: req.body.member } }
-    )
-    let response = await collection.findOne({ _id: req.body.id})
-    res.status(200).json(response)
-  } catch (error) {
-    console.log(error)
-    res.status(500)
-  }
+  
+  await res.locals.db.groupsCollection.createGroup(req.body.groupName, username);
+  return res.json({})
 })
 
 // Remove user from group
-router.put('/remove-user', async (req, res) => {
-  let collection = req.app.locals.groupsCollection;
-
-  try {
-    await collection.updateOne(
-      { _id: req.body._id },
-      { $pull: { members: req.body.member } }
-    )
-    let response = await collection.find({}).toArray()
-    res.status(200).json(response)
-  } catch(error) {
-    console.log(error)
-    res.status(500)
-  }
+router.delete('/member', async (req, res) => {
+  const {username} = req.body;
+  
+  await res.locals.db.groupsCollection.removeMember(username, req.body.groupName);
+  return res.json({});
 })
 
 // Delete group
-router.post('/delete', async (req, res) => {
-    let collection = req.app.locals.groupsCollection;
-
-    try {
-        collection.deleteOne({ _id : req.body._id })
-        let response = await collection.find({}).toArray()
-        res.status(200).json(response)
-    } catch(error) {
-        console.log(error)
-        res.status(500)
-    }
+router.delete('/', async (req, res) => {
+  await res.locals.db.groupsCollection.removeGroup(req.body.groupName);
+  return res.json({})
 })
 
 module.exports = router

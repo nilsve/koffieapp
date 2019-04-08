@@ -9,5 +9,5 @@ router.post('/', async (req, res, next) => {
   const {username, password} = req.body;
 
   await register(username, password);
-  res.sendStatus(200);
+  res.json({})
 });

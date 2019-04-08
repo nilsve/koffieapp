@@ -4,14 +4,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
+  flex-direction: column; 
 
-.Aligner-item--top {
-  align-self: flex-start;
-}
-
-.Aligner-item--bottom {
-  align-self: flex-end;
+  &__menubar {
+    align-self: flex-start;
+    margin: 0 auto;
+    &__item {
+      margin: 0px 10px 0px 10px;
+      
+    }
+  }
 }
 
 @keyframes App-logo-spin {
