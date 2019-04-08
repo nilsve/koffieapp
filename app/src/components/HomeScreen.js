@@ -1,27 +1,31 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
-import {userApi} from 'apis';
-import {Typography, Grid, Card, CardContent, CardActions, Button} from '@material-ui/core';
+import {userApi, orderApi} from 'apis';
+import {Typography, Grid, Card, CardContent, Button, ButtonBase} from '@material-ui/core';
+import Slider from '@material-ui/lab/Slider';
 
 class HomeScreen extends React.Component {
 
   state = {
     users: [],
     drinks: [],
+    choice: '',
+    milk: 0,
+    sugar: 0,
     username: '',
     password: '',
   }
 
   async componentDidMount() {
     const result = await userApi.getUsers();
-
     this.setState({
-      users : result,
+      users: result,
       drinks: [
-        {drink: 'Koffie',     desc: 'Gewoon zwarte koffie'},
-        {drink: 'Cappucino',  desc: 'Romig met een shot espresso'},
-        {drink: 'Latte Macchiato',  desc: 'Heel veel melk en espresso'},
-        {drink: 'Latte',  desc: 'Veel te veel melk'},
+        {drink: 'Koffie', desc: 'Gewoon zwarte koffie'},
+        {drink: 'Cappucino', desc: 'Romig met een shot espresso'},
+        {drink: 'Latte Macchiato', desc: 'Heel veel melk en espresso'},
+        {drink: 'Latte', desc: 'Veel te veel melk'},
+        {drink: 'Heet Water', desc: 'Zie titel'},
       ]
     })
   }
@@ -33,38 +37,86 @@ class HomeScreen extends React.Component {
   }
 
   renderBody(authData) {
-    const { drinks } = this.state
+    const {drinks, milk, sugar} = this.state
 
     return <div className="HomeScreen">
       <Typography component="h4" variant="h2" gutterBottom>Welkom {authData.userInfo.username}</Typography>
       <Grid container className="container" spacing={40}>
-        <Grid item xs={12}>
-          <Grid container className="drinks" justify="center" spacing={40}>
-            {drinks.map((drink) => (
-              <Grid key={drink.drink} item>
-                <Card elevation={3}>
-                  <CardContent>
-                    <Typography variant="h5" component="h2">
-                      {drink.drink}
-                    </Typography>
-                    <Typography color="textSecondary">
-                      {drink.desc}
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button>
-                      Kies {drink.drink}
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+        <Grid item xs={6}>
+          <Grid container className="drinks" justify="flex-start" spacing={40}>
+            {drinks.map((drink) => this.renderCard(drink))}
           </Grid>
+        </Grid>
+        <Grid item xs={6}>
+          <Grid container className="sliders" justify="center" spacing={40}>
+            <Typography variant="h5" component="h2">
+              Melk: {milk}
+            </Typography>
+            <Slider
+              value={milk}
+              min={0}
+              max={3}
+              step={1}
+              onChange={(e, value) => this.setState({milk: value})}
+            />
+            <Typography variant="h5" component="h2">
+              Suiker: {sugar}
+            </Typography>
+            <Slider
+              value={sugar}
+              min={0}
+              max={3}
+              step={1}
+              onChange={(e, value) => this.setState({sugar: value})}
+            />
+          </Grid>
+        </Grid>
+        <Grid container className="button" justify="center">
+          <Button variant="contained" disabled={!this.state.choice} onClick={this.handleClick}>
+            Bestellen
+          </Button>
         </Grid>
       </Grid>
     </div>
   }
 
+  renderCard(drink) {
+    const style = {
+      backgroundColor: this.state.choice === drink.drink ? 'lightgrey' : null,
+    };
+
+    return <Grid key={drink.drink} item>
+      <Card style={style}>
+        <ButtonBase onClick={() => this.handleToggleDrink(drink.drink)}>
+          <CardContent>
+            <Typography variant="h5" component="h2">
+              {drink.drink}
+            </Typography>
+            <Typography color="textSecondary">
+              {drink.desc}
+            </Typography>
+          </CardContent>
+        </ButtonBase>
+      </Card>
+    </Grid>;
+  }
+
+  handleToggleDrink = drink => {
+    console.log(drink)
+    this.setState({
+      choice: this.state.choice !== drink ? drink : null,
+    })
+  }
+
+  handleClick = async () => {
+    const {choice, milk, sugar} = this.state
+    const group = '1'
+    try {
+      await orderApi.order(choice, milk, sugar, group);
+    } catch (err) {
+
+    }
+  }
   handleUpdateField = fieldName => e => {
     this.setState({
       [fieldName]: e.target.value,

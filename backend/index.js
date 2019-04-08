@@ -25,6 +25,7 @@ async function startServer() {
   const db = await mongo;
   
   app.locals.usersCollection = db.usersCollection;
+  app.locals.ordersCollection = db.ordersCollection;
   app.locals.groupsCollection = db.groupsCollection;
 
   app.listen(PORT, () => console.log(`KoffieApp REST API running on port ${PORT}`));
