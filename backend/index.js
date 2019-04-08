@@ -23,10 +23,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 async function startServer() {
   const db = await mongo;
-  
-  app.locals.usersCollection = db.usersCollection;
-  app.locals.groupsCollection = db.groupsCollection;
 
+  app.locals.db = db;
+  
   app.listen(PORT, () => console.log(`KoffieApp REST API running on port ${PORT}`));
 }
 

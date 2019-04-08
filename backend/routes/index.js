@@ -8,4 +8,5 @@ router.use('/auth', require('./auth'));
 router.use(requireLogin);
 
 router.use('/users', require('./users'));
+router.use('/orders', require('./orders'));
 router.use('/groups', require('./groups'));

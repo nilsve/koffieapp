@@ -9,7 +9,8 @@ import {
   Button, TextField,                                          // Buttons
   FormControl, Select, InputLabel, OutlinedInput, MenuItem,   // Select Lists
   Table, TableBody, TableCell, TableHead, TableRow,           // Tables
-  Typography                                                  // Text
+  Typography,                                                  // Text
+  IconButton
 } from '@material-ui/core'
 
 class GroupForm extends React.Component {
@@ -42,59 +43,37 @@ class GroupForm extends React.Component {
     return <div className="GroupForm">
       <Grid container className="container" spacing={40}>
         <Grid item xs={3}>
-          <Typography variant="h5" gutterBottom>Groepen</Typography>
-          {group ? this.renderInGroup() : this.renderNotInGroup()}
-        </Grid>
-        <Grid item xs={3}>
-          {!!currentGroupname && <Typography variant="h5" gutterBottom>{currentGroupname}</Typography>}
-          {!_.isEmpty(members) &&
-            <Paper>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Leden</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {members.map(member => (
-                    <TableRow group={member}>
-                      <TableCell component="th" scope="row">
-                        {member}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Paper>
-          }
-        </Grid>
-        <Grid item xs={6}>
-          {allGroups.length > 0 && <Typography variant="h5" gutterBottom>Alle groepen</Typography>}
-          {allGroups.length > 0 && <Paper>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Groep</TableCell>
-                  <TableCell>Oprichter</TableCell>
-                  <TableCell align="right">Leden</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.values(allGroups).map(group => (
-                  <TableRow group={group._id}>
-                    <TableCell component="th" scope="row">
-                      {group.name}
-                    </TableCell>
-                    <TableCell align="right">{group.creator}</TableCell>
-                    <TableCell align="right">{group.members.join(', ')}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Paper>}
+          <Typography variant="h5" gutterBottom>{currentGroupname}</Typography>
+          {this.renderMyGroup()}
         </Grid>
       </Grid>
     </div>
+  }
+
+  renderMyGroup() {
+    const {members} = this.state;
+    return <Paper>
+      <table>
+        <thead>
+          <tr>
+            <td>Gebruiker</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          {members.map(member => (
+            <tr>
+              <td>
+                {member}
+              </td>
+              <td>
+                <button onClick={() => this.removeMember(member)}>X</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </Paper>
   }
 
   renderNotInGroup() {
@@ -221,12 +200,9 @@ class GroupForm extends React.Component {
     }
   }
 
-  removeMember = async (e) => {
-    e.preventDefault()
-    const {currentGroupname, userToRemove} = this.state
-
+  removeMember = async (member) => {
     try {
-      await groupApi.removeMember(currentGroupname, userToRemove)
+      await groupApi.removeMember(member)
       this.refreshData()
     } catch (error) {
       // TODO: Error dialog?

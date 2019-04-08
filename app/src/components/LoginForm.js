@@ -51,28 +51,28 @@ class LoginForm extends Component {
   renderRegisterForm() {
     const {newUsername, newPassword} = this.state;
     return <div className="LoginForm">
-          <form className="LoginForm__form">
-            <h1>Registreren</h1>
-            <TextField variant="outlined" label="Gebruikersnaam" type="text" onChange={this.handleUpdateField('newUsername')}>{newUsername}</TextField>
-            <span></span>
-            <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('newPassword')}>{newPassword}</TextField>
-            <span></span>
-            <Button variant="contained" color="primary" onClick={this.handleRegisterComplete}>Registreren</Button>
-            <span></span>
-            <Button variant="contained" color="default" onClick={this.toggleScreen('login')}>Terug</Button>
-          </form>
-        </div>
+      <form className="LoginForm__form">
+        <h1>Registreren</h1>
+        <TextField variant="outlined" label="Gebruikersnaam" type="text" onChange={this.handleUpdateField('newUsername')}>{newUsername}</TextField>
+        <span></span>
+        <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('newPassword')}>{newPassword}</TextField>
+        <span></span>
+        <Button variant="contained" color="primary" onClick={this.handleRegisterComplete}>Registreren</Button>
+        <span></span>
+        <Button variant="contained" color="default" onClick={this.toggleScreen('login')}>Terug</Button>
+      </form>
+    </div>
   }
 
   handleRegisterComplete = async (e) => {
     e.preventDefault();
     const {newUsername, newPassword} = this.state;
 
-    try {
-      await authApi.register(newUsername, newPassword);
-    } catch (err) {
+    await authApi.register(newUsername, newPassword);
 
-    }
+    this.setState({
+      status: 'login',
+    })
   }
 
   toggleScreen = newStatus => e => {

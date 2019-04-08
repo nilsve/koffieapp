@@ -13,29 +13,23 @@ export default class GroupApi extends BaseApi {
     return this.getJson('user-group')
   }
 
-  insertGroup(groupId) {
-    return this.postJson('insert', { _id: groupId})
+  setUserGroup(groupName) {
+    return this.postJson('user-group', {groupName})
   }
 
-  removeGroup(groupId) {
-    // Met 
-    return this.postJson(
-      'delete',
-      { _id: groupId }
-    )
+  insertGroup(groupName) {
+    return this.postJson('', {groupName})
   }
 
-  addMember(groupId, userId) {
-    return this.putJson(
-      'add-user',
-      { _id: groupId, member: userId }
-    )
+  removeGroup(groupName) {
+    return this.deleteJson('', {groupName});
   }
 
-  removeMember(groupId, userId) {
-    return this.putJson(
-      'remove-user',
-      { _id: groupId, member: userId }
-    )
+  addMember(groupName, userName) {
+    return this.putJson('add-user', {groupName, userName})
+  }
+
+  removeMember(username) {
+    return this.deleteJson('member', {username})
   }
 }

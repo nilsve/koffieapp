@@ -32,13 +32,8 @@ export function login(username, password) {
 
 export async function register(username, password) {
   const db = await mongo;
-  await db.usersCollection.insertOne({
-      _id: username,
-      username,
-      password,
-      status  : 'active',
-  })
 
+  await db.usersCollection.createUser(username, password);
   return true;
 }
 
@@ -55,15 +50,11 @@ export async function validateJwt(token) {
 }
 
 async function validateCredentials(username, password) {
-  // TODO: Validate
   const db = await mongo;
 
-  const user = await db.usersCollection.findOne({
-    _id: username,
-    password: password,
-  });
+  const user = await db.usersCollection.getUser(username);
 
-  if (user) {
+  if (user && user.password === password) {
     return true;
   } else {
     return false;

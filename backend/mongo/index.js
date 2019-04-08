@@ -1,16 +1,23 @@
-const MongoClient = require('mongodb').MongoClient
+import MongoClient from 'mongodb';
+
+import GroupsCollection from './collections/GroupsCollection';
+import OrdersCollection from './collections/OrdersCollection';
+import UsersCollection from './collections/UsersCollection';
+
 const mongo_uri = 'mongodb://localhost:27017';
 
 class Database {
   mongo = null;
   usersCollection = null;
+  ordersCollection = null;
   groupsCollection = null;
 
   constructor(mongo) {
     this.mongo = mongo;
 
-    this.usersCollection = mongo.collection('users');
-    this.groupsCollection = mongo.collection('groups');
+    this.usersCollection = new UsersCollection(mongo.collection('users'));
+    this.ordersCollection = new OrdersCollection(mongo.collection('orders'));
+    this.groupsCollection = new GroupsCollection(mongo.collection('groups'));
   }
 }
 
