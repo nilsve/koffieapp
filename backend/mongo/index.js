@@ -5,12 +5,14 @@ class Database {
   mongo = null;
   usersCollection = null;
   ordersCollection = null;
+  groupsCollection = null;
 
   constructor(mongo) {
     this.mongo = mongo;
 
     this.usersCollection = mongo.collection('users');
     this.ordersCollection = mongo.collection('orders');
+    this.groupsCollection = mongo.collection('groups');
   }
 }
 

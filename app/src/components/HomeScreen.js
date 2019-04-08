@@ -12,6 +12,8 @@ class HomeScreen extends React.Component {
     choice: '',
     milk: 0,
     sugar: 0,
+    username: '',
+    password: '',
   }
 
   async componentDidMount() {
@@ -34,16 +36,11 @@ class HomeScreen extends React.Component {
     </AuthConsumer>;
   }
 
-  handleChange = key => (value) => {
-    this.setState({
-      [key]: value,
-    });
-  };
-
   renderBody(authData) {
     const {drinks, milk, sugar} = this.state
+
     return <div className="HomeScreen">
-      <h1>Welkom {authData.userInfo.username}</h1>
+      <Typography component="h4" variant="h2" gutterBottom>Welkom {authData.userInfo.username}</Typography>
       <Grid container className="container" spacing={40}>
         <Grid item xs={6}>
           <Grid container className="drinks" justify="flex-start" spacing={40}>
@@ -120,6 +117,11 @@ class HomeScreen extends React.Component {
 
     }
   }
+  handleUpdateField = fieldName => e => {
+    this.setState({
+      [fieldName]: e.target.value,
+    });
+  };
 }
 
 export default HomeScreen;
