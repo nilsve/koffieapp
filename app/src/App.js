@@ -9,7 +9,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import {Button} from '@material-ui/core';
-import {AuthStore, AuthConsumer} from 'stores/AuthStore';
+import {AuthConsumer} from 'stores/AuthStore';
 
 function TabContainer(props) {
   return (
@@ -73,8 +73,10 @@ class App extends Component {
   };
 
   handleLogoff = () => {
-    //Hier nog iets toevoegen dat 'ie ook echt uitlogt.
-    console.log('Uitloggen')
+    //TODO: deze nog fixen
+    <AuthConsumer>
+      {(store) => store.setLoggedOn(null, null)}
+    </AuthConsumer>
   }
 }
 
