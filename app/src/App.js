@@ -6,9 +6,10 @@ import GroupForm from './components/GroupForm';
 import GroupProvider from './components/GroupProvider';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
-import PropTypes from 'prop-types';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+import {Button} from '@material-ui/core';
+import {AuthStore, AuthConsumer} from 'stores/AuthStore';
 
 function TabContainer(props) {
   return (
@@ -21,20 +22,26 @@ function TabContainer(props) {
 class App extends Component {
   state = {
     value: 0,
-    currentTab: 'bestellen',
   }
 
   render() {
     const {value} = this.state;
+    const style ={ 
+      color: 'lightgrey',
+      fontSize: 12,
+    }
     return (
       <div className="App">
         <AuthProvider>
           <GroupProvider>
             <AppBar position="static">
               <Tabs value={value} onChange={this.handleChange}>
-                <Tab label="Bestellen" />
-                <Tab label="Afhaallijst" />
-                <Tab label="Mijn groep" />
+                <Tab style={style} label="Bestellen" />
+                <Tab style={style} label="Afhaallijst" />
+                <Tab style={style} label="Mijn groep" />
+                <Button style={style} onClick={this.handleLogoff}>
+                  Uitloggen
+                </Button>
               </Tabs>
             </AppBar>
             {value === 0 && 
@@ -64,6 +71,11 @@ class App extends Component {
   handleChange = (e, value) => {
     this.setState({value});
   };
+
+  handleLogoff = () => {
+    //Hier nog iets toevoegen dat 'ie ook echt uitlogt.
+    console.log('Uitloggen')
+  }
 }
 
 export default App;
