@@ -27,8 +27,9 @@ class App extends Component {
   render() {
     const {value} = this.state;
     const style ={ 
-      color: 'lightgrey',
+      color: 'white',
       fontSize: 12,
+      width: 200,
     }
     return (
       <div className="App">
@@ -39,9 +40,9 @@ class App extends Component {
                 <Tab style={style} label="Bestellen" />
                 <Tab style={style} label="Afhaallijst" />
                 <Tab style={style} label="Mijn groep" />
-                <Button style={style} onClick={this.handleLogoff}>
-                  Uitloggen
-                </Button>
+                <AuthConsumer>
+                  {(store) => <Button style={style} onClick={() => store.onLogout()}>Uitloggen</Button>}
+                </AuthConsumer>
               </Tabs>
             </AppBar>
             {value === 0 && 
@@ -72,12 +73,6 @@ class App extends Component {
     this.setState({value});
   };
 
-  handleLogoff = () => {
-    //TODO: deze nog fixen
-    <AuthConsumer>
-      {(store) => store.setLoggedOn(null, null)}
-    </AuthConsumer>
-  }
 }
 
 export default App;
