@@ -12,3 +12,8 @@ export function storeUserData(userData) {
   window.localStorage.setItem('userData', JSON.stringify(userData));
   cachedUserData = userData;
 }
+
+export function clearUserData() {
+  window.localStorage.removeItem('userData');
+  cachedUserData = null;
+}

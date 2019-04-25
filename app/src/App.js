@@ -4,50 +4,75 @@ import AuthProvider from './components/AuthProvider';
 import HomeScreen from 'components/HomeScreen';
 import GroupForm from './components/GroupForm';
 import GroupProvider from './components/GroupProvider';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import {Button} from '@material-ui/core';
+import {AuthConsumer} from 'stores/AuthStore';
+
+function TabContainer(props) {
+  return (
+    <Typography component="div" style={{ padding: 8 * 3 }}>
+      {props.children}
+    </Typography>
+  );
+}
 
 class App extends Component {
   state = {
-    currentTab: 'bestellen',
+    value: 0,
   }
 
   render() {
+    const {value} = this.state;
+    const style ={ 
+      color: 'white',
+      fontSize: 12,
+      width: 200,
+    }
     return (
       <div className="App">
         <AuthProvider>
           <GroupProvider>
-            <div className="App__menubar">
-              {this.renderTab('bestellen', 'Bestellen')}
-              {this.renderTab('afhaallijst', 'Afhaallijst')}
-              {this.renderTab('groep', 'Mijn groep')}
-            </div>
-            <div className="Aligner-item--bottom">
-              {this.renderBody()}
-            </div>
+            <AppBar position="static">
+              <Tabs value={value} onChange={this.handleChange}>
+                <Tab style={style} label="Bestellen" />
+                <Tab style={style} label="Afhaallijst" />
+                <Tab style={style} label="Mijn groep" />
+                <AuthConsumer>
+                  {(store) => <Button style={style} onClick={() => store.onLogout()}>Uitloggen</Button>}
+                </AuthConsumer>
+              </Tabs>
+            </AppBar>
+            {value === 0 && 
+            <TabContainer>
+              <div className="Aligner-item--bottom">
+                <HomeScreen className="Aligner-item Aligner-item--top"/>
+              </div>
+            </TabContainer>}
+            {value === 1 && 
+            <TabContainer>
+              <div className="Aligner-item--bottom">
+                <HomeScreen className="Aligner-item Aligner-item--top"/>
+              </div>
+            </TabContainer>}
+            {value === 2 && 
+            <TabContainer>
+              <div className="Aligner-item--bottom">
+                <GroupForm className="Aligner-item Aligner-item--bottom"/>
+              </div>
+            </TabContainer>}
           </GroupProvider>
         </AuthProvider>
       </div>
     );
   }
 
-  renderTab(tabName, title) {
-     return <a href="#" className="App__menubar__item" onClick={() => this.handleTabChange(tabName)}>{title}</a>;
-  }
+  handleChange = (e, value) => {
+    this.setState({value});
+  };
 
-  renderBody() {
-    const {currentTab} = this.state;
-    switch (currentTab) {
-      case 'bestellen': return <HomeScreen className="Aligner-item Aligner-item--top"/>;
-      case 'afhaallijst': return <HomeScreen className="Aligner-item Aligner-item--top"/>;
-      case 'groep': return <GroupForm className="Aligner-item Aligner-item--bottom"/>;
-      default: return null;
-    }
-  }
-
-  handleTabChange = tabName => {
-    this.setState({
-      currentTab: tabName,
-    });
-  }
 }
 
 export default App;
