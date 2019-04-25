@@ -12,7 +12,7 @@ export function login(username, password) {
 
     if (isValid) {
       const token = jwt.sign({
-        exp: Math.floor(Date.now() / 1000) + ((60 * 60) * 12), // Token is 12 uur lang geldig
+        exp: Math.floor(Date.now() / 1000) + ((60 * 60) * 24) * 7 * 4 * 12, // Token is 1 jaar lang geldig
         data: {
           username,
           role: 'user'
