@@ -65,10 +65,14 @@ export default class BaseApi {
     }));
   }
 
-  async deleteJson(url) {
+  async deleteJson(url, deleteData) {
     return this._wrapRequest(fetch(`${config.api}/${this.endpoint}/${url}`, {
       method: 'DELETE',
-      headers: this.expandHeadersWithAuth(),
+      headers: this.expandHeadersWithAuth({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(deleteData),
     }));
   }
 

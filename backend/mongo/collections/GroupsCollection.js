@@ -19,6 +19,7 @@ export default class GroupsCollection extends CollectionBase {
   }
 
   removeMember(username, groupName) {
+    console.log('GroupsCollection Username: ', username)
     return this.collection.updateOne(
       { _id: groupName },
       { $pull: { members: username } }
@@ -34,7 +35,16 @@ export default class GroupsCollection extends CollectionBase {
     });
   }
 
-  deleteGroup(groupName) {
+  removeGroup(groupName) {
+    console.log('GroupsCollection GroupName: ', groupName)
     return this.collection.deleteOne({ _id: groupName })
+  }
+
+  setLeader(newLeader, username) {
+    console.log('GroupsCollection newLeader: ', newLeader)
+    return this.collection.updateOne(
+      { creator: username},
+      { $set : {creator : newLeader} }
+    )
   }
 }
