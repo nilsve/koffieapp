@@ -24,8 +24,9 @@ class HomeScreen extends React.Component {
         {drink: 'Koffie', desc: 'Gewoon zwarte koffie'},
         {drink: 'Cappucino', desc: 'Romig met een shot espresso'},
         {drink: 'Latte Macchiato', desc: 'Heel veel melk en espresso'},
-        {drink: 'Latte', desc: 'Veel te veel melk'},
-        {drink: 'Heet Water', desc: 'Zie titel'},
+        {drink: 'Espresso', desc: 'Zeer geconcentreerde koffie'},
+        {drink: 'Ristretto', desc: 'Zeer geconcentreerde espresso'},
+        {drink: 'Heet Water', desc: 'Om thee te zetten'},
       ]
     })
   }
@@ -37,8 +38,10 @@ class HomeScreen extends React.Component {
   }
 
   renderBody(authData) {
+    const style = {
+      height: 250,
+    };
     const {drinks, milk, sugar} = this.state
-
     return <div className="HomeScreen">
       <Typography component="h4" variant="h2" gutterBottom>Welkom {authData.userInfo.username}</Typography>
       <Grid container className="container" spacing={40}>
@@ -47,8 +50,8 @@ class HomeScreen extends React.Component {
             {drinks.map((drink) => this.renderCard(drink))}
           </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Grid container className="sliders" justify="center" spacing={40}>
+        <Grid item xs={6} alignItems="center">
+          <Grid container className="sliders" justify="center" alignItems="center" style={style}>
             <Typography variant="h5" component="h2">
               Melk: {milk}
             </Typography>
@@ -82,12 +85,14 @@ class HomeScreen extends React.Component {
 
   renderCard(drink) {
     const style = {
+      height: 150,
+      width: 200,
       backgroundColor: this.state.choice === drink.drink ? 'lightgrey' : null,
     };
 
     return <Grid key={drink.drink} item>
       <Card style={style}>
-        <ButtonBase onClick={() => this.handleToggleDrink(drink.drink)}>
+        <ButtonBase style={style} onClick={() => this.handleToggleDrink(drink.drink)}>
           <CardContent>
             <Typography variant="h5" component="h2">
               {drink.drink}

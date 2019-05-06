@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import BaseStore from './BaseStore';
-import {loadUserData, storeUserData} from 'auth/authHelpers'
+import {loadUserData, storeUserData, clearUserData} from 'auth/authHelpers';
 
 const AuthContext = React.createContext(null);
 
@@ -32,6 +31,7 @@ export class AuthStore extends BaseStore {
       ...this.state,
       setLoggedOn: this.setLoggedOn,
       setUserGroup: this.setUserGroup,
+      onLogout: this.handleLogout
     };
     
     return <AuthContext.Provider value={context}>
@@ -60,6 +60,14 @@ export class AuthStore extends BaseStore {
     this.setState({
       loggedOn: true,
       ...userData,
+    });
+  }
+
+  handleLogout = () => {
+    clearUserData();
+    this.setState({
+      loggedOn: false,
+      userData: null,
     });
   }
 }
