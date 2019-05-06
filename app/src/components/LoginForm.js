@@ -38,11 +38,8 @@ class LoginForm extends Component {
         {invalidPassword && <b>Onbekende gebruikersnaam en wachtwoord</b>}
         {error && <b>Onbekende fout opgetreden!</b>}
         <TextField variant="outlined" label="Gebruikersnaam" type="text" onChange={this.handleUpdateField('username')}>{username}</TextField>
-        <span></span>
         <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('password')}>{password}</TextField>
-        <span></span>
         <Button variant="contained" color="primary" onClick={this.handleLogin}>Inloggen</Button>
-        <span></span>
         <Button variant="contained" color="default" onClick={this.toggleScreen('register')}>Registreren</Button>
       </form>
     </div>;
@@ -54,11 +51,8 @@ class LoginForm extends Component {
       <form className="LoginForm__form">
         <h1>Registreren</h1>
         <TextField variant="outlined" label="Gebruikersnaam" type="text" onChange={this.handleUpdateField('newUsername')}>{newUsername}</TextField>
-        <span></span>
-        <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('newPassword')}>{newPassword}</TextField>
-        <span></span>
+        <TextField variant="outlined" label="Wachtwoord " type="password" onChange={this.handleUpdateField('newPassword')}>{newPassword}</TextField>
         <Button variant="contained" color="primary" onClick={this.handleRegisterComplete}>Registreren</Button>
-        <span></span>
         <Button variant="contained" color="default" onClick={this.toggleScreen('login')}>Terug</Button>
       </form>
     </div>
@@ -72,7 +66,11 @@ class LoginForm extends Component {
 
     this.setState({
       status: 'login',
-    })
+      username: '',
+      password: '',
+      newUsername: '',
+      newPassword: '',
+    });
   }
 
   toggleScreen = newStatus => e => {
