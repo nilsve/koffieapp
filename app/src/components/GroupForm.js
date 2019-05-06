@@ -36,24 +36,19 @@ class GroupForm extends React.Component {
   }
 
   render() {
-    return <AuthConsumer>
-      {(authData) => this.renderInGroup(authData)}
-    </AuthConsumer>
-  }
-
-  renderInGroup(authData) {
-    const {members, group, currentGroupname, newLeader} = this.state;
+    const {session} = this.props;
+    const {members, group, currentGroupname} = this.state;
     let isCreator
     let isNotCreator
 
     if (!_.isEmpty(group)) {
-      isCreator = group.creator === authData.userInfo.username
-      isNotCreator =  group.creator !== authData.userInfo.username
+      isCreator = group.creator === session.userInfo.username
+      isNotCreator = group.creator !== session.userInfo.username
     }
 
     return <div className="GroupForm">
       <Grid container spacing={16}>
-        { !_.isEmpty(members) &&
+        {!_.isEmpty(members) &&
           <>
             <Grid item xs={8}>
               <Typography variant="h5" gutterBottom>{currentGroupname}</Typography>
@@ -75,14 +70,14 @@ class GroupForm extends React.Component {
                         </TableCell>
                         {!_.isEmpty(group) && isCreator &&
                           <TableCell align="right">
-                            {!_.isEmpty(group) && isCreator && member !== authData.userInfo.username &&
+                            {!_.isEmpty(group) && isCreator && member !== session.userInfo.username &&
                               <IconButton onClick={() => this.removeMember(member)}>
-                                <DeleteIcon fontSize="small"/>
+                                <DeleteIcon fontSize="small" />
                               </IconButton>
                             }
                           </TableCell>
                         }
-                        </TableRow>
+                      </TableRow>
                     ))}
                   </TableBody>
                 </Table>
@@ -90,59 +85,20 @@ class GroupForm extends React.Component {
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h5" gutterBottom>Acties</Typography>
-              { isCreator &&
-                  <Button fullWidth onClick={this.removeGroup}>
-                    Groep verwijderen
+              {isCreator &&
+                <Button fullWidth onClick={this.removeGroup}>
+                  Groep verwijderen
                   </Button>
               }
-              { members.length > 1 && authData.userInfo.username === group.creator && <>
+              {members.length > 1 && session.userInfo.username === group.creator && <>
                 <Button fullWidth onClick={this.handleClickOpen}>
                   Uit {currentGroupname} stappen
                 </Button>
-                <Dialog
-                  open={this.state.dialogOpen}
-                  onClose={this.handleClose}
-                  aria-labelledby="form-dialog-title"
-                >
-                  <DialogTitle id="form-dialog-title">Uit de groep stappen</DialogTitle>
-                  <DialogContent>
-                    <DialogContentText>
-                      Als je als leider uit de groep stapt, dien je een nieuwe leider aan te wijzen.
-                  </DialogContentText>
-                    <FormControl fullWidth variant="outlined">
-                      <InputLabel
-                        ref={ref => {
-                          this.InputLabelRef = ref;
-                        }}
-                      >
-                      Nieuwe leider
-                      </InputLabel>
-                      <Select
-                        value={newLeader}
-                        onChange={this.handleUpdateField('newLeader')}
-                        input={
-                          <OutlinedInput
-                            labelWidth={108}
-                          />
-                        }
-                      >
-                      {_.without(members, authData.userInfo.username).map((user) => <MenuItem value={user}>{user}</MenuItem>)}
-                      </Select>
-                    </FormControl>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                      Annuleer
-                  </Button>
-                    <Button onClick={(e) => this.removeLeader(e)} color="primary">
-                      Stap uit {currentGroupname}
-                  </Button>
-                  </DialogActions>
-                </Dialog>
+                {this.renderDialog(session)}
               </>
-            }
-              { isNotCreator &&
-                <Button fullWidth onClick={() => this.removeMember(authData.userInfo.username)}>
+              }
+              {isNotCreator &&
+                <Button fullWidth onClick={() => this.removeMember(session.userInfo.username)}>
                   Uit {currentGroupname} stappen
                 </Button>
               }
@@ -151,6 +107,51 @@ class GroupForm extends React.Component {
         }
       </Grid>
     </div>
+  }
+
+  renderDialog(session) {
+    const {members, currentGroupname, newLeader} = this.state;
+
+    return <Dialog
+      open={this.state.dialogOpen}
+      onClose={this.handleClose}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Uit de groep stappen</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Als je als leider uit de groep stapt, dien je een nieuwe leider aan te wijzen.
+        </DialogContentText>
+        <FormControl fullWidth variant="outlined">
+          <InputLabel
+            ref={ref => {
+              this.InputLabelRef = ref;
+            }}
+          >
+            Nieuwe leider
+          </InputLabel>
+          <Select
+            value={newLeader}
+            onChange={this.handleUpdateField('newLeader')}
+            input={
+              <OutlinedInput
+                labelWidth={108}
+              />
+            }
+          >
+            {_.without(members, session.userInfo.username).map((user) => <MenuItem value={user}>{user}</MenuItem>)}
+          </Select>
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={this.handleClose} color="primary">
+          Annuleer
+      </Button>
+        <Button onClick={(e) => this.removeLeader(e)} color="primary">
+          Stap uit {currentGroupname}
+        </Button>
+      </DialogActions>
+    </Dialog>
   }
 
   insertGroup = async (e) => {
@@ -178,6 +179,8 @@ class GroupForm extends React.Component {
         members: null,
         currentGroupname: ''
       })
+
+      this.props.session.setUserGroup(null);
     } catch (error) {
       // TODO: Error dialog?
       console.log(error)
@@ -198,7 +201,9 @@ class GroupForm extends React.Component {
   }
 
   removeMember = async (member) => {
-    if (this.state.members.length === 1){
+    const {session} = this.props;
+
+    if (this.state.members.length === 1) {
       await groupApi.removeGroup(this.state.currentGroupname)
       this.setState({
         group: null,
@@ -216,6 +221,10 @@ class GroupForm extends React.Component {
         // TODO: Error dialog?
         console.log(error)
       }
+    }
+
+    if (session.userInfo.username === member) {
+      session.setUserGroup(null);
     }
   }
 
@@ -276,12 +285,16 @@ class GroupForm extends React.Component {
   }
 
   handleClickOpen = () => {
-    this.setState({ dialogOpen: true });
+    this.setState({dialogOpen: true});
   }
 
   handleClose = () => {
-    this.setState({ dialogOpen: false });
+    this.setState({dialogOpen: false});
   }
 }
 
-export default GroupForm;
+function GroupFormContainer(props) {
+  return <AuthConsumer>{session => <GroupForm {...props} session={session}/>}</AuthConsumer>
+}
+
+export default GroupFormContainer;

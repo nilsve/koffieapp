@@ -8,28 +8,43 @@ import {
 } from '@material-ui/core'
 
 import {groupApi} from 'apis';
+import {AuthConsumer} from 'stores/AuthStore';
 
 class GroupProvider extends Component {
   state = {
-    group: null,
-    allGroups: [],
     selectedGroup: '',
     newGroup: '',
   };
 
-  async componentDidMount() {
-    const group = await groupApi.getUserGroup();
+  async componentWillReceiveProps() {
+    this.loadData(false);
+  }
+
+  componentDidMount() {
+    this.loadData(true);
+  }
+
+  async loadData(refreshUserGroup) {
+    if (refreshUserGroup) {
+      const group = await groupApi.getUserGroup();
+      this.props.session.setUserGroup(group);
+    }
+
     const allGroups = await groupApi.getGroups();
 
     this.setState({
-      group,
       allGroups,
+
+      selectedGroup: '',
+      newGroup: '',
     })
   }
 
   render() {
-    const {group, allGroups, selectedGroup, newGroup} = this.state;
-    if (group) {
+    const {session} = this.props;
+    const {allGroups, selectedGroup, newGroup} = this.state;
+
+    if (session.userInfo.group) {
       return this.props.children;
     } else {
       return <div className="GroupProvider">
@@ -75,24 +90,24 @@ class GroupProvider extends Component {
 
   handleCreateGroupClick = async () => {
     const {newGroup} = this.state
+    const {session} = this.props;
 
     await groupApi.insertGroup(newGroup);
-
-    this.setState({
-      group: {},
-    });
-
+    session.setUserGroup(newGroup);
   }
 
   handleSelectGroupClick = async () => {
     const {selectedGroup} = this.state;
+    const {session} = this.props;
 
     await groupApi.setUserGroup(selectedGroup);
-
-    this.setState({
-      group: {},
-    });
+    session.setUserGroup(selectedGroup);
   }
 }
 
-export default GroupProvider;
+function GroupProviderContainer(props) {
+  return <AuthConsumer>{session => <GroupProvider {...props} session={session}/>}</AuthConsumer>
+}
+
+export default GroupProviderContainer;
+
