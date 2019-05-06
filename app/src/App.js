@@ -31,6 +31,7 @@ class App extends Component {
       fontSize: 12,
       width: 200,
     }
+    const styleLogoff = {...style, marginLeft: 'auto'}
     return (
       <div className="App">
         <AuthProvider>
@@ -41,7 +42,7 @@ class App extends Component {
                 <Tab style={style} label="Afhaallijst" />
                 <Tab style={style} label="Mijn groep" />
                 <AuthConsumer>
-                  {(store) => <Button style={style} onClick={() => store.onLogout()}>Uitloggen</Button>}
+                  {(store) => <Button style={styleLogoff} onClick={() => store.onLogout()}>Uitloggen</Button>}
                 </AuthConsumer>
               </Tabs>
             </AppBar>
