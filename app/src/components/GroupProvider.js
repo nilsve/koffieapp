@@ -47,11 +47,12 @@ class GroupProvider extends Component {
     if (session.userInfo.group) {
       return this.props.children;
     } else {
-      return <div className="GroupProvider">
-        <Typography variant="h4" gutterBottom>Geen groep!</Typography>
-        <Typography variant="subtitle2">Je zit nog niet in een groep. Als er al groepen bestaan kun je hier in stappen, maak anders een nieuwe groep aan.</Typography>
-        <Grid container spacing={16}>
-        <Grid item xs={6}>
+      return <Grid container spacing={40} direction="column" justify="space-around" alignItems="center">
+        <Grid item xs ={4} style={{minWidth: '500px'}}>
+          <Typography variant="h4" gutterBottom>Je zit niet in een groep!</Typography>
+          <Typography variant="subtitle2">Als er al groepen bestaan kun je hier in een bestaande groep stappen. Maak anders een nieuwe groep aan.</Typography>
+        </Grid>
+        <Grid item xs={4} style={{minWidth: '500px'}}>
           {!_.isEmpty(allGroups) && <>
             <Typography variant="h6" gutterBottom>Kies een groep</Typography>
             <FormControl fullWidth variant="outlined" >
@@ -71,7 +72,7 @@ class GroupProvider extends Component {
             <Button variant="contained" color="primary" fullWidth default onClick={this.handleSelectGroupClick}>Inschrijven</Button>
           </>}
         </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4} style={{minWidth: '500px'}}>
             <Typography variant="h6" gutterBottom>Maak een nieuwe groep</Typography>
             <FormControl fullWidth variant="outlined" >
               <TextField
@@ -84,7 +85,6 @@ class GroupProvider extends Component {
             <Button variant="contained" color="primary" fullWidth default onClick={this.handleCreateGroupClick}>Klaar</Button>
           </Grid>
         </Grid>
-      </div>
     }
   }
 

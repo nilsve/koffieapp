@@ -1,4 +1,3 @@
-import './GroupForm.scss';
 import React from 'react';
 import _ from 'lodash';
 import {AuthConsumer} from 'stores/AuthStore';
@@ -12,7 +11,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableRow,                     // Tables
   Typography,                                                           // Text
   IconButton,                                                           // icons
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions  // Dialogs
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, // Dialogs
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -35,6 +34,8 @@ class GroupForm extends React.Component {
     this.refreshData()
   }
 
+
+
   render() {
     const {session} = this.props;
     const {members, group, currentGroupname} = this.state;
@@ -46,8 +47,17 @@ class GroupForm extends React.Component {
       isNotCreator = group.creator !== session.userInfo.username
     }
 
-    return <div className="GroupForm">
-      <Grid container spacing={16}>
+    const grid = {
+      minWidth: '700px',
+      direction: 'row',
+      alignItems: 'flex-start',
+    }
+    const button = {
+      margin: '10px 0px 10px 0px',
+    }
+
+    return <div>
+      <Grid container spacing={40} style={grid}>
         {!_.isEmpty(members) &&
           <>
             <Grid item xs={8}>
@@ -66,7 +76,7 @@ class GroupForm extends React.Component {
                     {members.map(member => (
                       <TableRow group={member} key={member}>
                         <TableCell>
-                          {member}
+                          {member === group.creator ? member + ' (Leider)' : member }
                         </TableCell>
                         {!_.isEmpty(group) && isCreator &&
                           <TableCell align="right">
@@ -85,23 +95,23 @@ class GroupForm extends React.Component {
             </Grid>
             <Grid item xs={4}>
               <Typography variant="h5" gutterBottom>Acties</Typography>
-              {isCreator &&
-                <Button fullWidth onClick={this.removeGroup}>
-                  Groep verwijderen
-                  </Button>
-              }
-              {members.length > 1 && session.userInfo.username === group.creator && <>
-                <Button fullWidth onClick={this.handleClickOpen}>
-                  Uit {currentGroupname} stappen
-                </Button>
-                {this.renderDialog(session)}
-              </>
-              }
-              {isNotCreator &&
-                <Button fullWidth onClick={() => this.removeMember(session.userInfo.username)}>
-                  Uit {currentGroupname} stappen
-                </Button>
-              }
+                  {isCreator &&
+                    <Button fullWidth color="secondary" style={button} onClick={this.removeGroup}>
+                      Groep verwijderen
+                      </Button>
+                  }
+                  {members.length > 1 && session.userInfo.username === group.creator && <>
+                    <Button fullWidth color="secondary" style={button} onClick={this.handleClickOpen}>
+                      Uit {currentGroupname} stappen
+                    </Button>
+                    {this.renderDialog(session)}
+                  </>
+                  }
+                  {isNotCreator &&
+                    <Button fullWidth color="secondary" style={button} onClick={() => this.removeMember(session.userInfo.username)}>
+                      Uit {currentGroupname} stappen
+                    </Button>
+                  }
             </Grid>
           </>
         }
@@ -144,10 +154,10 @@ class GroupForm extends React.Component {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button onClick={this.handleClose} color="primary">
+        <Button color="primary" onClick={this.handleClose}>
           Annuleer
       </Button>
-        <Button onClick={(e) => this.removeLeader(e)} color="primary">
+        <Button color="secondary" onClick={(e) => this.removeLeader(e)}>
           Stap uit {currentGroupname}
         </Button>
       </DialogActions>

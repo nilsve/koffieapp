@@ -26,7 +26,7 @@ class App extends Component {
 
   render() {
     const {value} = this.state;
-    const style ={ 
+    const style ={
       color: 'white',
       fontSize: 12,
       width: 200,
@@ -46,22 +46,22 @@ class App extends Component {
                 </AuthConsumer>
               </Tabs>
             </AppBar>
-            {value === 0 && 
+            {value === 0 &&
             <TabContainer>
               <div className="Aligner-item--bottom">
                 <HomeScreen className="Aligner-item Aligner-item--top"/>
               </div>
             </TabContainer>}
-            {value === 1 && 
+            {value === 1 &&
             <TabContainer>
               <div className="Aligner-item--bottom">
                 <HomeScreen className="Aligner-item Aligner-item--top"/>
               </div>
             </TabContainer>}
-            {value === 2 && 
+            {value === 2 &&
             <TabContainer>
               <div className="Aligner-item--bottom">
-                <GroupForm className="Aligner-item Aligner-item--bottom"/>
+                <GroupForm className="Aligner-item Aligner-item--top"/>
               </div>
             </TabContainer>}
           </GroupProvider>
