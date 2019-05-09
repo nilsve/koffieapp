@@ -5,7 +5,7 @@ import {Typography, CardMedia, Grid, Card, CardContent, Button, ButtonBase} from
 import Slider from '@material-ui/lab/Slider';
 import {Americano, Cappuccino, CafeLatte, Espresso, Macchiato, Mocha} from '../assets';
 
-class HomeScreen extends React.Component {
+class OrderScreen extends React.Component {
 
   state = {
     users: [],
@@ -140,4 +140,4 @@ class HomeScreen extends React.Component {
   };
 }
 
-export default HomeScreen;
+export default OrderScreen;

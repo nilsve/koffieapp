@@ -4,8 +4,9 @@
     display: flex;
     flex-direction: column;
     text-align: center;
-    span {
-      margin: 10px 0px;
+
+    &__input {
+      margin: 10px 0px 10px !important;
     }
   }
 }

@@ -6,6 +6,21 @@ export default class OrdersCollection extends CollectionBase {
     return this.collection.find({}).toArray();
   }
 
+  getAllOrdersForGroup(group) {
+    return this.collection.find({
+      group,
+      finished: {$ne: false},
+    }).toArray();
+  }
+
+  finishOrder(orderId) {
+    return this.collection.update({
+      _id: new ObjectId(orderId),
+    }, {
+      finished: true,
+    });
+  }
+
   getOrder(orderId) {
     return this.collection.findOne({_id: orderId});
   }

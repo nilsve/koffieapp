@@ -1,7 +1,8 @@
 import './App.scss';
 import React, { Component } from 'react';
 import AuthProvider from './components/AuthProvider';
-import HomeScreen from 'components/HomeScreen';
+import OrderScreen from 'components/OrderScreen';
+import OrderListScreen from 'components/orderlist/OrderListScreen';
 import GroupForm from './components/GroupForm';
 import GroupProvider from './components/GroupProvider';
 import AppBar from '@material-ui/core/AppBar';
@@ -49,13 +50,13 @@ class App extends Component {
             {value === 0 &&
             <TabContainer>
               <div className="Aligner-item--bottom">
-                <HomeScreen className="Aligner-item Aligner-item--top"/>
+                <OrderScreen className="Aligner-item Aligner-item--top"/>
               </div>
             </TabContainer>}
             {value === 1 &&
             <TabContainer>
               <div className="Aligner-item--bottom">
-                <HomeScreen className="Aligner-item Aligner-item--top"/>
+                <OrderListScreen className="Aligner-item Aligner-item--top"/>
               </div>
             </TabContainer>}
             {value === 2 &&

@@ -11,6 +11,7 @@
   "author": "Indy Maat",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.4",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.0",
     "moment": "^2.24.0",
