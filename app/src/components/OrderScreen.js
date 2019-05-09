@@ -1,9 +1,14 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
 import {userApi, orderApi} from 'apis';
-import {Typography, CardMedia, Grid, Card, CardContent, Button, ButtonBase} from '@material-ui/core';
+import {Typography, CardMedia, Grid, Card, CardContent, Button, ButtonBase, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
 import {Americano, Cappuccino, CafeLatte, Espresso, Macchiato, Mocha} from '../assets';
+import Slide from '@material-ui/core/Slide';
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />;
+}
 
 class OrderScreen extends React.Component {
 
@@ -15,6 +20,7 @@ class OrderScreen extends React.Component {
     sugar: 0,
     username: '',
     password: '',
+    dialogOpen: false,
   }
 
   async componentDidMount() {
@@ -44,6 +50,7 @@ class OrderScreen extends React.Component {
     };
     const {drinks, milk, sugar} = this.state
     return <div className="HomeScreen">
+    {this.renderDialog()}
       <Typography component="h4" variant="h2" gutterBottom>Welkom {authData.userInfo.username}</Typography>
       <Grid container className="container" spacing={40}>
         <Grid item xs={6}>
@@ -118,6 +125,31 @@ class OrderScreen extends React.Component {
     </Grid>;
   }
 
+  renderDialog() {
+    return <Dialog
+      open={this.state.dialogOpen}
+      onClose={this.handleClose}
+      TransitionComponent={Transition}
+      aria-labelledby="form-dialog-title"
+      >
+      <DialogTitle id="form-dialog-title"></DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Bestelling geplaatst!
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={this.handleClose}>
+            Verbergen
+        </Button>
+      </DialogActions>
+    </Dialog>
+  }
+
+  handleClose = () => {
+    this.setState({dialogOpen: false});
+  }
+
   handleToggleDrink = drink => {
     this.setState({
       choice: this.state.choice !== drink ? drink : null,
@@ -129,6 +161,8 @@ class OrderScreen extends React.Component {
     const group = '1'
     try {
       await orderApi.order(choice, milk, sugar, group);
+      this.setState({dialogOpen: true});
+      console.log(this.state.dialogOpen)
     } catch (err) {
       
     }
