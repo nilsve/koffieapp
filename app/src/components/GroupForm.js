@@ -14,6 +14,11 @@ import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, // Dialogs
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete';
+import Slide from '@material-ui/core/Slide';
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />;
+}
 
 class GroupForm extends React.Component {
   state = {
@@ -125,6 +130,7 @@ class GroupForm extends React.Component {
     return <Dialog
       open={this.state.dialogOpen}
       onClose={this.handleClose}
+      TransitionComponent={Transition}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle id="form-dialog-title">Uit de groep stappen</DialogTitle>
