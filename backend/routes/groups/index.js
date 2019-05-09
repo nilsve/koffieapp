@@ -27,22 +27,30 @@ router.post('/user-group', async (req, res) => {
 // Make new group
 router.post('/', async (req, res) => {
   const {username} = res.locals.userInfo;
-  
+
   await res.locals.db.groupsCollection.createGroup(req.body.groupName, username);
   return res.json({})
 })
 
 // Remove user from group
 router.delete('/member', async (req, res) => {
-  const {username} = req.body;
-  
-  await res.locals.db.groupsCollection.removeMember(username, req.body.groupName);
+  const group = await res.locals.db.groupsCollection.findUserGroup(req.body.username);
+
+  await res.locals.db.groupsCollection.removeMember(req.body.username, group.name);
   return res.json({});
 })
 
 // Delete group
 router.delete('/', async (req, res) => {
   await res.locals.db.groupsCollection.removeGroup(req.body.groupName);
+  return res.json({})
+})
+
+// Set new leader
+router.post('/new-leader', async (req, res) => {
+  const {username} = res.locals.userInfo;
+
+  await res.locals.db.groupsCollection.setLeader(req.body.newLeader, username)
   return res.json({})
 })
 

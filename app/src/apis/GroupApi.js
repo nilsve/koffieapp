@@ -22,6 +22,7 @@ export default class GroupApi extends BaseApi {
   }
 
   removeGroup(groupName) {
+    console.log('GroupApi Removing Group: ', groupName)
     return this.deleteJson('', {groupName});
   }
 
@@ -30,6 +31,12 @@ export default class GroupApi extends BaseApi {
   }
 
   removeMember(username) {
+    console.log('GroupApi Removing User: ', username)
     return this.deleteJson('member', {username})
+  }
+
+  setLeader(newLeader) {
+    console.log("Setting new leader to: ", newLeader)
+    return this.postJson('new-leader', {newLeader})
   }
 }

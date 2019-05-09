@@ -30,8 +30,10 @@ export class AuthStore extends BaseStore {
     const context = {
       ...this.state,
       setLoggedOn: this.setLoggedOn,
+      setUserGroup: this.setUserGroup,
       onLogout: this.handleLogout
-    }
+    };
+    
     return <AuthContext.Provider value={context}>
       {this.props.children}
     </AuthContext.Provider>
@@ -42,6 +44,16 @@ export class AuthStore extends BaseStore {
     storeUserData(userData);
 
     this.setUserData(userData);
+  }
+
+  setUserGroup = group => {
+    const {userInfo} = this.state;
+    this.setState({
+      userInfo: {
+        ...userInfo,
+        group,
+      }
+    });
   }
 
   setUserData(userData) {

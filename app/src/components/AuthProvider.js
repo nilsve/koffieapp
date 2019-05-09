@@ -25,6 +25,4 @@ export default class AuthProvider extends React.Component {
       return <LoginForm onLoggedOn={store.setLoggedOn}/>
     }
   }
-
-
 }
