@@ -1,3 +1,4 @@
+import Promise from 'bluebird';
 const express = require('express')
 const router = express.Router()
 
@@ -39,7 +40,8 @@ router.post('/', async (req, res) => {
 
 //Finish orders
 router.put('/', async (req, res) => {
-  await res.locals.db.ordersCollection.finishOrders(req.body);
+  await Promise.map(req.body, orderId => res.locals.db.ordersCollection.finishOrder(orderId));
+  return res.json({});
 });
 
 // // Update order

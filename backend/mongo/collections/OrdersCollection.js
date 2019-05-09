@@ -7,14 +7,15 @@ export default class OrdersCollection extends CollectionBase {
   }
 
   getAllOrdersForGroup(group) {
-    return this.collection.find({group}).toArray();
+    return this.collection.find({
+      group,
+      finished: {$ne: false},
+    }).toArray();
   }
 
-  finishOrders(orderIds) {
+  finishOrder(orderId) {
     return this.collection.update({
-      _id: {
-        $in: orderIds.map(orderId => new ObjectId(orderId))
-      }
+      _id: new ObjectId(orderId),
     }, {
       finished: true,
     });
