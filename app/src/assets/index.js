@@ -1,0 +1,6 @@
+export const Americano = require('./Americano.png')
+export const Cappuccino = require('./Cappuccino.png')
+export const CafeLatte = require('./CafeLatte.png')
+export const Espresso = require('./Espresso.png')
+export const Macchiato = require('./Macchiato.png')
+export const Mocha = require('./Mocha.png')

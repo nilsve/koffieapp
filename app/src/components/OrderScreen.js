@@ -1,8 +1,9 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
 import {userApi, orderApi} from 'apis';
-import {Typography, Grid, Card, CardContent, Button, ButtonBase} from '@material-ui/core';
+import {Typography, CardMedia, Grid, Card, CardContent, Button, ButtonBase} from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
+import {Americano, Cappuccino, CafeLatte, Espresso, Macchiato, Mocha} from '../assets';
 
 class OrderScreen extends React.Component {
 
@@ -21,12 +22,12 @@ class OrderScreen extends React.Component {
     this.setState({
       users: result,
       drinks: [
-        {drink: 'Koffie', desc: 'Gewoon zwarte koffie'},
-        {drink: 'Cappucino', desc: 'Romig met een shot espresso'},
-        {drink: 'Latte Macchiato', desc: 'Heel veel melk en espresso'},
-        {drink: 'Espresso', desc: 'Zeer geconcentreerde koffie'},
-        {drink: 'Ristretto', desc: 'Zeer geconcentreerde espresso'},
-        {drink: 'Heet Water', desc: 'Om thee te zetten'},
+        {drink: 'Americano', desc: 'Espresso with hot water on top', image: Americano},
+        {drink: 'Cappuccino', desc: 'Espresso with steamed milk and foamy milk on top', image: Cappuccino},
+        {drink: 'Cafe Latte', desc: 'Single shot of coffee with steamed milk', image: CafeLatte},
+        {drink: 'Espresso', desc: 'Small amount of highly concentrated coffee', image: Espresso},
+        {drink: 'Macchiato', desc: 'Espresso topped off with foamed milk', image: Macchiato},
+        {drink: 'Mocha', desc: 'Latte with added chocolate syrup', image: Mocha},
       ]
     })
   }
@@ -83,17 +84,28 @@ class OrderScreen extends React.Component {
     </div>
   }
 
+
   renderCard(drink) {
     const style = {
-      height: 150,
+      height: 300,
       width: 200,
       backgroundColor: this.state.choice === drink.drink ? 'lightgrey' : null,
     };
-
+    const styleMedia = {
+      height: 150,
+      width: 200, 
+      paddingTop: 0,
+    }
+    
     return <Grid key={drink.drink} item>
       <Card style={style}>
         <ButtonBase style={style} onClick={() => this.handleToggleDrink(drink.drink)}>
           <CardContent>
+            <CardMedia style={styleMedia}
+              component="img"
+              image={drink.image}
+            />
+            <br/>
             <Typography variant="h5" component="h2">
               {drink.drink}
             </Typography>
@@ -107,7 +119,6 @@ class OrderScreen extends React.Component {
   }
 
   handleToggleDrink = drink => {
-    console.log(drink)
     this.setState({
       choice: this.state.choice !== drink ? drink : null,
     })
@@ -119,7 +130,7 @@ class OrderScreen extends React.Component {
     try {
       await orderApi.order(choice, milk, sugar, group);
     } catch (err) {
-
+      
     }
   }
   handleUpdateField = fieldName => e => {
