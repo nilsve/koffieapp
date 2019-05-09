@@ -9,6 +9,10 @@ export default class OrderApi extends BaseApi {
     return this.getJson(orderId);
   }
 
+  finishOrders(orderIds) {
+    return this.putJson('', orderIds);
+  }
+
   getOrders() {
     return this.getJson('')
   }

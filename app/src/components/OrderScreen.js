@@ -4,7 +4,7 @@ import {userApi, orderApi} from 'apis';
 import {Typography, Grid, Card, CardContent, Button, ButtonBase} from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
 
-class HomeScreen extends React.Component {
+class OrderScreen extends React.Component {
 
   state = {
     users: [],
@@ -129,4 +129,4 @@ class HomeScreen extends React.Component {
   };
 }
 
-export default HomeScreen;
+export default OrderScreen;
