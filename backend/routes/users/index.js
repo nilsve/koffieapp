@@ -23,7 +23,7 @@ router.get('/:username', async (req, res) => {
 
 // Make user admin
 router.put('/:username', requireAdmin, async (req, res) => {
-  const user = await res.locals.db.usersCollection.toggleAdmin(req,params.username, req.body.isAdmin);
+  const user = await res.locals.db.usersCollection.setUserAdmin(req.params.username, req.body.isAdmin);
   return res.json(user);
 })
 

@@ -17,4 +17,12 @@ export default class UsersCollection extends CollectionBase {
       status: 'active',
     });
   }
+
+  setUserAdmin(username, isAdmin) {
+    return this.collection.updateOne({
+      _id: username
+    }, {
+      $set: {isAdmin},
+    })
+  }
 }
