@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import AuthProvider from './components/AuthProvider';
 import OrderScreen from 'components/OrderScreen';
 import OrderListScreen from 'components/orderlist/OrderListScreen';
+import AdminScreen from './components/AdminScreen';
 import GroupForm from './components/GroupForm';
 import GroupProvider from './components/GroupProvider';
 import AppBar from '@material-ui/core/AppBar';
@@ -42,6 +43,7 @@ class App extends Component {
                 <Tab style={style} label="Bestellen" />
                 <Tab style={style} label="Afhaallijst" />
                 <Tab style={style} label="Mijn groep" />
+                <Tab style={style} label="Beheer" />
                 <AuthConsumer>
                   {(store) => <Button style={styleLogoff} onClick={() => store.onLogout()}>Uitloggen</Button>}
                 </AuthConsumer>
@@ -63,6 +65,12 @@ class App extends Component {
             <TabContainer>
               <div className="Aligner-item--bottom">
                 <GroupForm className="Aligner-item Aligner-item--top"/>
+              </div>
+            </TabContainer>}
+            {value === 3 &&
+            <TabContainer>
+              <div className="Aligner-item--bottom">
+                <AdminScreen className="Aligner-item Aligner-item--top"/>
               </div>
             </TabContainer>}
           </GroupProvider>
