@@ -14,10 +14,10 @@ export default class OrdersCollection extends CollectionBase {
   }
 
   finishOrder(orderId) {
-    return this.collection.update({
+    return this.collection.updateOne({
       _id: new ObjectId(orderId),
     }, {
-      finished: true,
+      $set: {finished: true},
     });
   }
 
