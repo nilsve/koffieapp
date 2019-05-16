@@ -61,7 +61,7 @@ class AdminScreen extends React.Component {
   }
 
   handleToggleAdmin = (user) => {
-    
+    userApi.setUserAdmin(user.username, !user.isAdmin)
   }
 
   async refreshData() {
