@@ -37,13 +37,10 @@ class LoginForm extends Component {
         <h1>Inloggen</h1>
         {invalidPassword && <b>Onbekende gebruikersnaam en wachtwoord</b>}
         {error && <b>Onbekende fout opgetreden!</b>}
-        <TextField variant="outlined" label="Gebruikersnaam (of emailadres)" type="text" onChange={this.handleUpdateField('username')}>{username}</TextField>
-        <span></span>
-        <TextField variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('password')}>{password}</TextField>
-        <span></span>
-        <Button variant="contained" color="primary" onClick={this.handleLogin}>Inloggen</Button>
-        <span></span>
-        <Button variant="contained" color="default" onClick={this.toggleScreen('register')}>Registreren</Button>
+        <TextField className="LoginForm__form__input" variant="outlined" label="Gebruikersnaam (of emailadres)" type="text" onChange={this.handleUpdateField('username')}>{username}</TextField>
+        <TextField className="LoginForm__form__input" variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('password')}>{password}</TextField>
+        <Button className="LoginForm__form__input" variant="contained" color="primary" onClick={this.handleLogin}>Inloggen</Button>
+        <Button className="LoginForm__form__input" variant="contained" color="default" onClick={this.toggleScreen('register')}>Registreren</Button>
       </form>
     </div>;
   }
@@ -55,8 +52,8 @@ class LoginForm extends Component {
         <h1>Registreren</h1>
         <TextField className="LoginForm__form__input" variant="outlined" label="Gebruikersnaam  (of emailadres)" type="text" onChange={this.handleUpdateField('newUsername')}>{newUsername}</TextField>
         <TextField className="LoginForm__form__input" variant="outlined" label="Wachtwoord" type="password" onChange={this.handleUpdateField('newPassword')}>{newPassword}</TextField>
-        <Button variant="contained" color="primary" onClick={this.handleRegisterComplete}>Registreren</Button>
-        <Button variant="contained" color="default" onClick={this.toggleScreen('login')}>Terug</Button>
+        <Button className="LoginForm__form__input" variant="contained" color="primary" onClick={this.handleRegisterComplete}>Registreren</Button>
+        <Button className="LoginForm__form__input" variant="contained" color="default" onClick={this.toggleScreen('login')}>Terug</Button>
       </form>
     </div>
   }

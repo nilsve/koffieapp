@@ -12,4 +12,8 @@ export default class UserApi extends BaseApi {
   getUsers() {
     return this.getJson('')
   }
+
+  setUserAdmin(username, isAdmin) {
+    return this.putJson(username, isAdmin);
+  }
 }
