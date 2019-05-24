@@ -12,6 +12,7 @@ router.post('/', async (req, res, next) => {
     const token = await login(username, password);
     res.json(token);
   } catch (err) {
+    console.log('Error: ' + err)
     res.sendStatus(403);
   }
 });
