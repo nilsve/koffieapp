@@ -61,15 +61,7 @@ async function validateCredentials(username, password) {
 
   const user = await db.usersCollection.getUser(username);
 
-  pbkdf2(user.salt, password).then((resolve) => {
-    if (resolve === user.password) {
-      console.log('TRUE')
-      // Ik moet hier true kunnen terugeven, maar dat lukt me niet...
-      return true;
-    } else {
-      return null;
-    }
-  }).catch((reject) => {
-      return reject;
-  });
+  const hash = await pbkdf2(user.salt, password);
+  
+  return user && user.password === hash;
 }
