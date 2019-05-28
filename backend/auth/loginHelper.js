@@ -1,7 +1,7 @@
 import config from '../config';
 import jwt from 'jsonwebtoken';
-
 import mongo from '../mongo';
+import {sha256, pbkdf2} from '../auth/encryption';
 
 // Returnt een signed jwt token
 export function login(username, password) {
@@ -33,8 +33,15 @@ export function login(username, password) {
 export async function register(username, password) {
   const db = await mongo;
 
-  await db.usersCollection.createUser(username, password);
-  return true;
+  // Salt built with CSPRNG, same length of encrypted password
+  const salt = await sha256(require("csprng")(256, 32));
+
+  pbkdf2(salt, password).then((hash) => {
+    console.log('hash: ', hash);
+    db.usersCollection.createUser(username, hash, salt);
+  }).catch((error) => {
+    console.log(error)
+  })
 }
 
 export async function validateJwt(token) {
@@ -53,10 +60,8 @@ async function getUser(username, password) {
   const db = await mongo;
 
   const user = await db.usersCollection.getUser(username);
+  
+  const hash = await pbkdf2(user.salt, password);
 
-  if (user && user.password === password) {
-    return user;
-  } else {
-    return false;
-  }
+  return user && user.password === hash;
 }

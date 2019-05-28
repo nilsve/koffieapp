@@ -9,11 +9,12 @@ export default class UsersCollection extends CollectionBase {
     return this.collection.findOne({_id: username});
   }
 
-  createUser(username, password) {
+  createUser(username, password, salt) {
     return this.collection.insertOne({
       _id: username,
       name: username,
       password,
+      salt,
       status: 'active',
     });
   }
