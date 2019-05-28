@@ -27,7 +27,6 @@ class App extends Component {
   state = {
     value: 0,
     admin: false,
-    checked: false,
   }
 
   render() {
@@ -109,21 +108,17 @@ class App extends Component {
   }
 
   checkadmin = async (authData) => {
-    const {admin, checked} = this.state
+    const {admin} = this.state
     const user = await userApi.getUser(authData.userInfo.username)
-    if (!checked) {
-      if(user.isAdmin) {
-        this.setState({
-          admin: true,
-          checked: true
-        })
-      } else {
-        this.setState({
-          checked: true
-        })
-      }
+    if (user.isAdmin && !admin) {
+      this.setState({
+        admin: true,
+      })
+    } else if (!user.isAdmin && admin) {
+      this.setState({
+        admin: false,
+      })
     }
-
   }
 
   handleChange = (e, value) => {
