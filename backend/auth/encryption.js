@@ -1,5 +1,3 @@
-import {rejects} from "assert";
-
 export const sha256 = async (content) => {
   const crypto = require("crypto")
 

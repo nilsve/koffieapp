@@ -1,7 +1,7 @@
 import config from '../config';
 import jwt from 'jsonwebtoken';
 import mongo from '../mongo';
-import {sha256, pbkdf2} from '../routes/auth/secure'
+import {sha256, pbkdf2} from '../auth/encryption';
 
 // Returnt een signed jwt token
 export function login(username, password) {
@@ -62,6 +62,6 @@ async function validateCredentials(username, password) {
   const user = await db.usersCollection.getUser(username);
 
   const hash = await pbkdf2(user.salt, password);
-  
+
   return user && user.password === hash;
 }
