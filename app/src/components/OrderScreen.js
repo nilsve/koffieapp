@@ -162,11 +162,11 @@ class OrderScreen extends React.Component {
     try {
       await orderApi.order(choice, milk, sugar, group);
       this.setState({dialogOpen: true});
-      console.log(this.state.dialogOpen)
     } catch (err) {
       
     }
   }
+
   handleUpdateField = fieldName => e => {
     this.setState({
       [fieldName]: e.target.value,
