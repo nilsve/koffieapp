@@ -1,4 +1,5 @@
-const express = require('express')
+import express from 'express';
+import {requireAdmin} from '../../auth/middlewares';
 const router = express.Router()
 const ObjectId = require('mongodb').ObjectId
 
@@ -11,6 +12,12 @@ router.get('/', async (req, res) => {
 // Get single user
 router.get('/:username', async (req, res) => {
   const user = await res.locals.db.usersCollection.getUser(req.params.username);
+  return res.json(user);
+})
+
+// Make user admin
+router.put('/:username', requireAdmin, async (req, res) => {
+  const user = await res.locals.db.usersCollection.setUserAdmin(req.params.username, req.body.isAdmin);
   return res.json(user);
 })
 

@@ -8,14 +8,14 @@ export function login(username, password) {
   // Jsonwebtoken ondertsteunt geen promises helaas, dus geen async functie hiero..
   return new Promise(async (resolve, reject) => {
     // TODO: Verbind met login
-    const isValid = await validateCredentials(username, password);
+    const user = await getUser(username, password);
 
-    if (isValid) {
+    if (user) {
       const token = jwt.sign({
         exp: Math.floor(Date.now() / 1000) + ((60 * 60) * 24) * 7 * 4 * 12, // Token is 1 jaar lang geldig
         data: {
           username,
-          role: 'user'
+          isAdmin: user.isAdmin,
         }
       }, config.secret, (err, token) => {
         if (err) {
@@ -56,11 +56,11 @@ export async function validateJwt(token) {
   })
 }
 
-async function validateCredentials(username, password) {
+async function getUser(username, password) {
   const db = await mongo;
 
   const user = await db.usersCollection.getUser(username);
-
+  
   const hash = await pbkdf2(user.salt, password);
 
   return user && user.password === hash;

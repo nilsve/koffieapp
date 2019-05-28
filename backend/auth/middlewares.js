@@ -1,7 +1,6 @@
 import {validateJwt} from './loginHelper';
 
 export const requireLogin = async (req, res, next) => {
-  // Ik weet niet of dit de goede manier is.. Maar bij een OPTIONS request sturen we nog geen
   const jwtToken = req.headers.authorization;
   try {
     const userData = await validateJwt(jwtToken);
@@ -11,3 +10,11 @@ export const requireLogin = async (req, res, next) => {
     return res.sendStatus(403);
   }
 };
+
+export const requireAdmin = async (req, res, next) => {
+  if (res.locals.userInfo.isAdmin) {
+    next();
+  } else {
+    return res.sendStatus(403);
+  }
+}
