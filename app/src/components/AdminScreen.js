@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import {userApi} from 'apis';
+import {userApi, drinkApi} from 'apis';
 import Checkbox from '@material-ui/core/Checkbox';
 import {AuthConsumer} from 'stores/AuthStore';
 
@@ -22,6 +22,7 @@ function Transition(props) {
 class AdminScreen extends React.Component {
   state = {
     allUsers: [],
+    allDrinks: [],
     dialogOpen: false,
   }
 
@@ -36,7 +37,7 @@ class AdminScreen extends React.Component {
   }
 
   renderBody(authData) {
-    const {allUsers} = this.state
+    const {allUsers, allDrinks} = this.state
     return <div>
       <h3>Admins</h3>
       <Paper>
@@ -77,14 +78,19 @@ class AdminScreen extends React.Component {
           </TableRow>
         </TableHead>
         <TableBody>
-          <TableRow>
-            <TableCell>
-            </TableCell>
-            <TableCell>
-            </TableCell>
-            <TableCell>
-            </TableCell>
-          </TableRow>
+          {allDrinks.map(drink => (
+            <TableRow key={drink.drink}>
+              <TableCell>
+                {drink.drink}
+              </TableCell>
+              <TableCell>
+                {drink.desc}
+              </TableCell>
+              <TableCell>
+                Upload
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </Paper>
@@ -128,8 +134,10 @@ class AdminScreen extends React.Component {
 
   async refreshData() {
     const users = await userApi.getUsers()
+    const drinks = await drinkApi.getDrinks()
     this.setState({
-      allUsers: users
+      allUsers: users,
+      allDrinks: drinks,
     })
   }
 
