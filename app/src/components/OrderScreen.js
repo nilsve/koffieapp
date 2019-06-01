@@ -26,6 +26,7 @@ class OrderScreen extends React.Component {
   async componentDidMount() {
     const userResult = await userApi.getUsers();
     const drinkResult = await drinkApi.getDrinks();
+    this.refreshImages(drinkResult)
     this.setState({
       users: userResult,
       drinks: drinkResult,
@@ -138,6 +139,13 @@ class OrderScreen extends React.Component {
         </Button>
       </DialogActions>
     </Dialog>
+  }
+
+  refreshImages(drinkResult) {
+    let images = [Americano, Cappuccino, CafeLatte, Espresso, Macchiato, Mocha]
+    for (let i = 0; i < drinkResult.length; i++) {
+      drinkResult[i].image = images[i]
+    }
   }
 
   handleClose = () => {
