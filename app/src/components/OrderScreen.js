@@ -1,6 +1,6 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
-import {userApi, orderApi} from 'apis';
+import {userApi, orderApi, drinkApi} from 'apis';
 import {Typography, CardMedia, Grid, Card, CardContent, Button, ButtonBase, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
 import {Americano, Cappuccino, CafeLatte, Espresso, Macchiato, Mocha} from '../assets';
@@ -24,17 +24,11 @@ class OrderScreen extends React.Component {
   }
 
   async componentDidMount() {
-    const result = await userApi.getUsers();
+    const userResult = await userApi.getUsers();
+    const drinkResult = await drinkApi.getDrinks();
     this.setState({
-      users: result,
-      drinks: [
-        {drink: 'Americano', desc: 'Espresso with hot water on top', image: Americano},
-        {drink: 'Cappuccino', desc: 'Espresso with steamed milk and foamy milk on top', image: Cappuccino},
-        {drink: 'Cafe Latte', desc: 'Single shot of coffee with steamed milk', image: CafeLatte},
-        {drink: 'Espresso', desc: 'Small amount of highly concentrated coffee', image: Espresso},
-        {drink: 'Macchiato', desc: 'Espresso topped off with foamed milk', image: Macchiato},
-        {drink: 'Mocha', desc: 'Latte with added chocolate syrup', image: Mocha},
-      ]
+      users: userResult,
+      drinks: drinkResult,
     })
   }
 
