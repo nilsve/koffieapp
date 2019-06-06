@@ -46,7 +46,7 @@ class OrderScreen extends React.Component {
     const {drinks, milk, sugar} = this.state
     return <div className="HomeScreen">
     {this.renderDialog()}
-      <Typography component="h4" variant="h2" gutterBottom>Welkom {authData.userInfo.username}</Typography>
+      <Typography variant="h5" gutterBottom>Welkom {authData.userInfo.username}</Typography>
       <Grid container className="container" spacing={40}>
         <Grid item xs={6}>
           <Grid container className="drinks" justify="flex-start" spacing={40}>

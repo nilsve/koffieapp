@@ -27,7 +27,7 @@ class OrderListScreen extends Component {
     const {orders} = this.state;
 
     return <div>
-      <Typography component="h4" variant="h2" gutterBottom>Afhaallijst</Typography>
+      <Typography variant="h5" gutterBottom>Afhaallijst</Typography>
       {
         !isEmpty(orders) ? <OrderTable onCollectOrders={this.handleCollectOrders} orders={orders}/> :
         <span>geen orders</span>

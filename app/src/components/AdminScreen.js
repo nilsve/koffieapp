@@ -4,14 +4,13 @@ import {userApi, drinkApi} from 'apis';
 import Checkbox from '@material-ui/core/Checkbox';
 import {AuthConsumer} from 'stores/AuthStore';
 
-
-
 // Material
 import {
+  Grid,
   Paper,                                                                // Backgrounds
-  Button,                                                               // Buttons
+  Button, ButtonBase,                                                    // Buttons
   Table, TableBody, TableCell, TableHead, TableRow,                     // Tables
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, // Dialogs
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Typography, // Dialogs
 } from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
 
@@ -38,63 +37,115 @@ class AdminScreen extends React.Component {
 
   renderBody(authData) {
     const {allUsers, allDrinks} = this.state
+    const style = {
+      margin: 20,
+    }
     return <div>
-      <h3>Admins</h3>
-      <Paper>
-      {this.renderDialog()}
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Gebruiker</TableCell>
-            <TableCell>Admin</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {allUsers.map(user => (
-            <TableRow key={user.username}>
-              <TableCell>
-                {user.username}
-              </TableCell>
-              <TableCell>
-                <Checkbox
-                  checked={user.isAdmin}
-                  onChange={() => {this.handleToggleAdmin(user, authData)}}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
-    <br/>
-    <h3>Dranken</h3>
-    <Paper>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Drank</TableCell>
-            <TableCell>Omschrijving</TableCell>
-            <TableCell>Plaatje</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {allDrinks.map(drink => (
-            <TableRow key={drink.drink}>
-              <TableCell>
-                {drink.drink}
-              </TableCell>
-              <TableCell>
-                {drink.desc}
-              </TableCell>
-              <TableCell>
-                Upload
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
+      <Grid container className="container" spacing={40}>
+        <Grid item xs={4}>
+          <Typography variant="h5" gutterBottom>Admins</Typography>
+          <Paper>
+            {this.renderDialog()}
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Gebruiker</TableCell>
+                  <TableCell>Admin</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {allUsers.map(user => (
+                  <TableRow key={user.username}>
+                    <TableCell>
+                      {user.username}
+                    </TableCell>
+                    <TableCell>
+                      <Checkbox
+                        checked={user.isAdmin}
+                        onChange={() => {this.handleToggleAdmin(user, authData)}}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Paper>
+        </Grid>
+        <Grid item xs={8}>
+          <Typography variant="h5" gutterBottom>Dranken</Typography>
+          <Paper>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Drank</TableCell>
+                  <TableCell>Omschrijving</TableCell>
+                  <TableCell>Plaatje</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {allDrinks.map(drink => (
+                  <TableRow>
+                    <TableCell>
+                      <TextField
+                        value={drink.drink}
+                        onChange={(e) => this.handleDrinkNameChange(drink, e.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        value={drink.desc}
+                        onChange={(e) => this.handleDrinkDescChange(drink, e.target.value)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      Upload
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              
+            </Table>
+            <Button style={style} variant="contained" onClick={this.handleChange}>
+                Submit
+              </Button>
+          </Paper>
+        </Grid>
+      </Grid>
     </div>
+  }
+
+  handleDrinkNameChange = (_drink, newName) => {
+    const newDrinks = this.state.allDrinks.map(drink => {
+      if (drink.drink === _drink.drink) {
+        return {
+          ...drink,
+          drink: newName,
+        }
+      } else {
+        return drink;
+      }
+    });
+
+    this.setState({
+      allDrinks: newDrinks,
+    })
+  }
+
+  handleDrinkDescChange = (_drink, newName) => {
+    const newDrinks = this.state.allDrinks.map(drink => {
+      if (drink.drink === _drink.drink) {
+        return {
+          ...drink,
+          desc: newName,
+        }
+      } else {
+        return drink;
+      }
+    });
+
+    this.setState({
+      allDrinks: newDrinks,
+    })
   }
 
   handleToggleAdmin = async (user, authData) => {
@@ -130,6 +181,10 @@ class AdminScreen extends React.Component {
 
   handleClose = () => {
     this.setState({dialogOpen: false});
+  }
+
+  handleChange = async () => {
+    // await drinkApi.updateDrink();
   }
 
   async refreshData() {
