@@ -7,10 +7,11 @@ import {AuthConsumer} from 'stores/AuthStore';
 // Material
 import {
   Grid,
-  Paper,                                                                // Backgrounds
-  Button, ButtonBase,                                                    // Buttons
-  Table, TableBody, TableCell, TableHead, TableRow,                     // Tables
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, Typography, // Dialogs
+  Paper,                                                                                        // Backgrounds
+  Button, ButtonBase,                                                                           // Buttons
+  Table, TableBody, TableCell, TableHead, TableRow,                                             // Tables
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,                         // Dialogs
+  TextField, Typography,                                                                        // Text
 } from '@material-ui/core'
 import Slide from '@material-ui/core/Slide';
 
@@ -22,7 +23,7 @@ class AdminScreen extends React.Component {
   state = {
     allUsers: [],
     allDrinks: [],
-    dialogOpen: false,
+    dialogOpen: false, 
   }
 
   componentDidMount() {
