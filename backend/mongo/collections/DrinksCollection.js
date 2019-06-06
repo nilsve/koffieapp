@@ -13,4 +13,17 @@ export default class DrinksCollection extends CollectionBase {
     });
   }
 
+  getDrink(drink) {
+    return this.collection.findOne({_id: drink});
+  }
+
+  updateDrink(drink, desc) {
+    return this.collection.updateOne({
+      _id: drink
+    }, {
+      $set: {drink},
+      $set: {desc},
+    })
+  }
+
 }

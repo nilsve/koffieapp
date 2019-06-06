@@ -15,4 +15,16 @@ router.get('/', async (req, res) => {
   return res.json(filteredDrinks)
 })
 
+// Get single drink
+router.get('/:drink', async (req, res) => {
+  const drink = await res.locals.db.drinksCollection.getDrink(req.params.drink);
+  return res.json(drink);
+})
+
+// Update drink
+router.put('/:drink', requireAdmin, async (req, res) => {
+  const drink = await res.locals.db.drinksCollection.updateDrink(req.params.username, req.body.isAdmin);
+  return res.json(drink);
+})
+
 module.exports = router

@@ -9,5 +9,11 @@ export default class DrinkApi extends BaseApi {
     return this.getJson('')
   }
 
+  getDrink(name) {
+    return this.getJson(name)
+  }
 
+  updateDrink(name, desc) {
+    return this.putJson(name, {name, desc});
+  }
 }
