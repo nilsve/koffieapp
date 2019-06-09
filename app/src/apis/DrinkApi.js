@@ -13,7 +13,10 @@ export default class DrinkApi extends BaseApi {
     return this.getJson(name)
   }
 
-  updateDrink(name, desc) {
-    return this.putJson(name, {name, desc});
+  updateDrinks(allDrinks) {
+    allDrinks.forEach( (drink) => {
+      const singleDesc = drink.desc
+      return this.putJson(drink.drink, {singleDesc});
+    });
   }
 }

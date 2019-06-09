@@ -23,7 +23,8 @@ router.get('/:drink', async (req, res) => {
 
 // Update drink
 router.put('/:drink', requireAdmin, async (req, res) => {
-  const drink = await res.locals.db.drinksCollection.updateDrink(req.params.username, req.body.isAdmin);
+  console.log(req.params.drink, req.body.singleDesc)
+  const drink = await res.locals.db.drinksCollection.updateDrink(req.params.drink, req.body.singleDesc);
   return res.json(drink);
 })
 
