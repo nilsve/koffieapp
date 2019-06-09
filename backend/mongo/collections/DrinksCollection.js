@@ -21,9 +21,7 @@ export default class DrinksCollection extends CollectionBase {
     return this.collection.updateOne({
       _id: drink
     }, {
-      $set: {drink},
       $set: {desc},
     })
   }
-
 }

@@ -87,10 +87,7 @@ class AdminScreen extends React.Component {
                 {allDrinks.map(drink => (
                   <TableRow>
                     <TableCell>
-                      <TextField
-                        value={drink.drink}
-                        onChange={(e) => this.handleDrinkNameChange(drink, e.target.value)}
-                      />
+                      {drink.drink}
                     </TableCell>
                     <TableCell>
                       <TextField
@@ -113,23 +110,6 @@ class AdminScreen extends React.Component {
         </Grid>
       </Grid>
     </div>
-  }
-
-  handleDrinkNameChange = (_drink, newName) => {
-    const newDrinks = this.state.allDrinks.map(drink => {
-      if (drink.drink === _drink.drink) {
-        return {
-          ...drink,
-          drink: newName,
-        }
-      } else {
-        return drink;
-      }
-    });
-
-    this.setState({
-      allDrinks: newDrinks,
-    })
   }
 
   handleDrinkDescChange = (_drink, newName) => {
@@ -185,7 +165,8 @@ class AdminScreen extends React.Component {
   }
 
   handleChange = async () => {
-    // await drinkApi.updateDrink();
+    const {allDrinks} = this.state
+    await drinkApi.updateDrinks(this.state.allDrinks);
   }
 
   async refreshData() {
