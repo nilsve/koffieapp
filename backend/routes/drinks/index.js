@@ -28,4 +28,10 @@ router.put('/:drink', requireAdmin, async (req, res) => {
   return res.json(drink);
 })
 
+router.delete('/:drink', requireAdmin, async (req, res) => {
+  console.log(req.params.drink, req.body.singleDesc)
+  const drink = await res.locals.db.drinksCollection.deleteDrink(req.params.drink);
+  return res.json({});
+})
+
 module.exports = router

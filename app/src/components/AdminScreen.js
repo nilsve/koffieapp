@@ -8,11 +8,13 @@ import {AuthConsumer} from 'stores/AuthStore';
 import {
   Grid,
   Paper,                                                                                        // Backgrounds
-  Button, ButtonBase,                                                                           // Buttons
+  Button,                                                                                       // Buttons
   Table, TableBody, TableCell, TableHead, TableRow,                                             // Tables
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,                         // Dialogs
+  IconButton,                                                                                   // icons
   TextField, Typography,                                                                        // Text
 } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete';
 import Slide from '@material-ui/core/Slide';
 
 function Transition(props) {
@@ -80,7 +82,7 @@ class AdminScreen extends React.Component {
                 <TableRow>
                   <TableCell>Drank</TableCell>
                   <TableCell>Omschrijving</TableCell>
-                  <TableCell>Plaatje</TableCell>
+                  <TableCell>Verwijderen</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -96,14 +98,16 @@ class AdminScreen extends React.Component {
                       />
                     </TableCell>
                     <TableCell>
-                      Upload
+                      <IconButton onClick={() => this.handleRemoveDrink(drink)}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
               
             </Table>
-            <Button style={style} variant="contained" onClick={this.handleChange}>
+            <Button style={style} variant="contained" onClick={this.handleUpdateDrinks}>
                 Submit
               </Button>
           </Paper>
@@ -164,9 +168,14 @@ class AdminScreen extends React.Component {
     this.setState({dialogOpen: false});
   }
 
-  handleChange = async () => {
+  handleUpdateDrinks = async () => {
     const {allDrinks} = this.state
     await drinkApi.updateDrinks(this.state.allDrinks);
+  }
+
+  handleRemoveDrink = async (drink) => {
+    await drinkApi.removeDrink(drink.drink)
+    this.refreshData()
   }
 
   async refreshData() {
