@@ -4,9 +4,7 @@ import set from 'lodash/set';
 
 import {
   Paper,                                                                // Backgrounds
-  Button,                                                               // Buttons
   Table, TableBody, TableCell, TableHead, TableRow,                     // Tables
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, // Dialogs
 } from '@material-ui/core'
 
 class OrderTable extends Component {

@@ -1,5 +1,5 @@
 import './App.scss';
-import React, {Component, useReducer} from 'react';
+import React, {Component} from 'react';
 import AuthProvider from './components/AuthProvider';
 import OrderScreen from 'components/OrderScreen';
 import OrderListScreen from 'components/orderlist/OrderListScreen';

@@ -17,10 +17,8 @@ export default class DrinkApi extends BaseApi {
     return this.deleteJson(drink)
   }
 
-  updateDrinks(allDrinks) {
-    allDrinks.forEach( (drink) => {
-      const singleDesc = drink.desc
-      return this.putJson(drink.drink, {singleDesc});
-    });
+  updateDrink(drink) {
+    const singleDesc = drink.desc
+    return this.putJson(drink.drink, {singleDesc})
   }
 }
