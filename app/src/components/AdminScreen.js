@@ -14,7 +14,6 @@ import {
   TextField, Typography,                                                                        // Text
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
-import BuildIcon from '@material-ui/icons/Build';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Slide from '@material-ui/core/Slide';
 
@@ -100,7 +99,10 @@ class AdminScreen extends React.Component {
                       {drink.drink}
                     </TableCell>
                     <TableCell>
-                      {drink.desc}
+                      <TextField
+                        value={drink.desc}
+                        onChange={(e) => this.handleDrinkDescChange(drink, e.target.value)}
+                      />
                     </TableCell>
                     <TableCell>
                       <IconButton onClick={() => this.handleRemoveDrink(drink)}>
