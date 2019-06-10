@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import {userApi, drinkApi} from 'apis';
 import Checkbox from '@material-ui/core/Checkbox';
 import {AuthConsumer} from 'stores/AuthStore';
@@ -169,8 +168,9 @@ class AdminScreen extends React.Component {
   }
 
   handleUpdateDrinks = async () => {
-    const {allDrinks} = this.state
-    await drinkApi.updateDrinks(this.state.allDrinks);
+    this.state.allDrinks.forEach( async (drink) => {
+      await drinkApi.updateDrink(drink);
+    });
   }
 
   handleRemoveDrink = async (drink) => {
