@@ -14,6 +14,7 @@ import {
   TextField, Typography,                                                                        // Text
 } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add';
+import BuildIcon from '@material-ui/icons/Build';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Slide from '@material-ui/core/Slide';
 
@@ -27,6 +28,8 @@ class AdminScreen extends React.Component {
     allDrinks: [],
     dialogOpen: false,
     dialogAddOpen: false,
+    dialogEditOpen: false,
+    editDrink: '',
   }
 
   componentDidMount() {
@@ -51,6 +54,7 @@ class AdminScreen extends React.Component {
           <Paper>
             {this.renderDialog()}
             {this.renderDialogAdd()}
+            {this.renderDialogEdit()}
             <Table>
               <TableHead>
                 <TableRow>
@@ -99,10 +103,7 @@ class AdminScreen extends React.Component {
                       {drink.drink}
                     </TableCell>
                     <TableCell>
-                      <TextField
-                        value={drink.desc}
-                        onChange={(e) => this.handleDrinkDescChange(drink, e.target.value)}
-                      />
+                      {drink.desc}
                     </TableCell>
                     <TableCell>
                       <IconButton onClick={() => this.handleRemoveDrink(drink)}>
@@ -110,7 +111,9 @@ class AdminScreen extends React.Component {
                       </IconButton>
                     </TableCell>
                     <TableCell>
-
+                      <IconButton onClick={() => this.openEdit(drink)}>
+                        <BuildIcon fontSize="small" />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -123,23 +126,6 @@ class AdminScreen extends React.Component {
         </Grid>
       </Grid>
     </div>
-  }
-
-  handleDrinkDescChange = (_drink, newName) => {
-    const newDrinks = this.state.allDrinks.map(drink => {
-      if (drink.drink === _drink.drink) {
-        return {
-          ...drink,
-          desc: newName,
-        }
-      } else {
-        return drink;
-      }
-    });
-
-    this.setState({
-      allDrinks: newDrinks,
-    })
   }
 
   handleToggleAdmin = async (user, authData) => {
@@ -210,9 +196,57 @@ class AdminScreen extends React.Component {
     </Dialog>
   }
 
+  openEdit(drink) {
+    this.setState({
+      dialogEditOpen: true,
+      editDrink: drink,
+    })
+  }
+
+  renderDialogEdit() {
+    const drink = this.state.editDrink
+
+    return <Dialog
+      open={this.state.dialogEditOpen}
+      onClose={this.handleClose}
+      TransitionComponent={Transition}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Omschrijving aanpassen</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="newDesc"
+          label="Omschrijving van de drank"
+          placeholder={drink.desc}
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={() => this.handleEditDrink(document.getElementById('newDesc').value)}>
+          Aanpassen
+        </Button>
+        <Button color="primary" onClick={this.handleClose}>
+          Annuleren
+        </Button>
+      </DialogActions>
+    </Dialog>
+  }
+
   handleClose = () => {
-    this.setState({dialogOpen: false});
-    this.setState({dialogAddOpen: false});
+    this.setState({
+      dialogOpen: false,
+      dialogAddOpen: false,
+      dialogEditOpen: false,
+    });
+  }
+
+  handleEditDrink(newDesc) {
+    const drink = this.state.editDrink
+    drink.desc = newDesc
+    this.handleUpdateDrink(drink)
+    this.handleClose()
   }
 
   handleAddDrink = async (drink, desc) => {
@@ -221,15 +255,15 @@ class AdminScreen extends React.Component {
     this.handleClose()
   }
 
-  handleUpdateDrinks = async () => {
-    this.state.allDrinks.forEach(async (drink) => {
-      await drinkApi.updateDrink(drink);
-    });
+  handleUpdateDrink = async (drink) => {
+    await drinkApi.updateDrink(drink);
+    this.refreshData()
   }
 
   handleRemoveDrink = async (drink) => {
     await drinkApi.removeDrink(drink.drink)
     this.refreshData()
+    this.handleClose()
   }
 
   async refreshData() {
