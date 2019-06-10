@@ -218,12 +218,13 @@ class AdminScreen extends React.Component {
           autoFocus
           margin="dense"
           id="newDesc"
-          placeholder={drink.desc}
+          value={drink.desc}
+          onChange={() => this.handleEditDrinkTemp(document.getElementById('newDesc').value)}
           fullWidth
         />
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={() => this.handleEditDrink(document.getElementById('newDesc').value)}>
+        <Button color="primary" onClick={() => this.handleEditDrink()}>
           Aanpassen
         </Button>
         <Button color="primary" onClick={this.handleClose}>
@@ -239,11 +240,19 @@ class AdminScreen extends React.Component {
       dialogAddOpen: false,
       dialogEditOpen: false,
     });
+    this.refreshData()
   }
 
-  handleEditDrink(newDesc) {
+  handleEditDrinkTemp(newDesc) {
     const drink = this.state.editDrink
     drink.desc = newDesc
+    this.setState({
+      editDrink: drink
+    })
+  }
+
+  handleEditDrink() {
+    const drink = this.state.editDrink
     this.handleUpdateDrink(drink)
     this.handleClose()
   }
