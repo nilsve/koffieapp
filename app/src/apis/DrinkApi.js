@@ -13,6 +13,10 @@ export default class DrinkApi extends BaseApi {
     return this.getJson(name)
   }
 
+  removeDrink(drink) {
+    return this.deleteJson(drink)
+  }
+
   updateDrinks(allDrinks) {
     allDrinks.forEach( (drink) => {
       const singleDesc = drink.desc
