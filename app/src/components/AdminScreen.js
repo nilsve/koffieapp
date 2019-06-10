@@ -13,6 +13,8 @@ import {
   IconButton,                                                                                   // icons
   TextField, Typography,                                                                        // Text
 } from '@material-ui/core'
+import AddIcon from '@material-ui/icons/Add';
+import BuildIcon from '@material-ui/icons/Build';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Slide from '@material-ui/core/Slide';
 
@@ -24,7 +26,9 @@ class AdminScreen extends React.Component {
   state = {
     allUsers: [],
     allDrinks: [],
-    dialogOpen: false, 
+    dialogOpen: false,
+    dialogAddOpen: false,
+    dialogEditOpen: false,
   }
 
   componentDidMount() {
@@ -48,6 +52,8 @@ class AdminScreen extends React.Component {
           <Typography variant="h5" gutterBottom>Admins</Typography>
           <Paper>
             {this.renderDialog()}
+            {this.renderDialogAdd()}
+            {this.renderDialogEdit()}
             <Table>
               <TableHead>
                 <TableRow>
@@ -82,6 +88,11 @@ class AdminScreen extends React.Component {
                   <TableCell>Drank</TableCell>
                   <TableCell>Omschrijving</TableCell>
                   <TableCell>Verwijderen</TableCell>
+                  <TableCell>
+                    <IconButton onClick={() => this.setState({dialogAddOpen: true})}>
+                      <AddIcon fontSize="small" />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -97,18 +108,22 @@ class AdminScreen extends React.Component {
                       />
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => this.handleRemoveDrink(drink)}>
+                      <IconButton onClick={() => this.handleEditDrink(drink)}>
+                        <BuildIcon fontSize="small" />
+                      </IconButton>                      <IconButton onClick={() => this.handleRemoveDrink(drink)}>
                         <DeleteIcon fontSize="small" />
                       </IconButton>
+                    </TableCell>
+                    <TableCell>
+
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-              
             </Table>
             <Button style={style} variant="contained" onClick={this.handleUpdateDrinks}>
-                Submit
-              </Button>
+              Submit
+            </Button>
           </Paper>
         </Grid>
       </Grid>
@@ -163,12 +178,93 @@ class AdminScreen extends React.Component {
     </Dialog>
   }
 
+  renderDialogAdd() {
+    return <Dialog
+      open={this.state.dialogAddOpen}
+      onClose={this.handleClose}
+      TransitionComponent={Transition}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Drank toevoegen</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Voer onderstaande velden in om een drank toe te voegen
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="drink"
+          label="Naam van drank"
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="desc"
+          label="Omschrijving van drank"
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={() => this.handleAddDrink(document.getElementById('drink').value, document.getElementById('desc').value)}>
+          Toevoegen
+        </Button>
+        <Button color="primary" onClick={this.handleClose}>
+          Annuleren
+        </Button>
+      </DialogActions>
+    </Dialog>
+  }
+
+  renderDialogEdit() {
+    return <Dialog
+      open={this.state.dialogAddOpen}
+      onClose={this.handleClose}
+      TransitionComponent={Transition}
+      aria-labelledby="form-dialog-title"
+    >
+      <DialogTitle id="form-dialog-title">Drank toevoegen</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Voer onderstaande velden in om een drank toe te voegen
+        </DialogContentText>
+        <TextField
+          autoFocus
+          margin="dense"
+          id="drink"
+          label="Naam van drank"
+          fullWidth
+        />
+        <TextField
+          margin="dense"
+          id="desc"
+          label="Omschrijving van drank"
+          fullWidth
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={() => this.handleAddDrink(document.getElementById('drink').value, document.getElementById('desc').value)}>
+          Toevoegen
+        </Button>
+        <Button color="primary" onClick={this.handleClose}>
+          Annuleren
+        </Button>
+      </DialogActions>
+    </Dialog>
+  }
+
   handleClose = () => {
     this.setState({dialogOpen: false});
+    this.setState({dialogAddOpen: false});
+  }
+
+  handleAddDrink = async (drink, desc) => {
+    await drinkApi.addDrink(drink, desc)
+    this.refreshData()
+    this.handleClose()
   }
 
   handleUpdateDrinks = async () => {
-    this.state.allDrinks.forEach( async (drink) => {
+    this.state.allDrinks.forEach(async (drink) => {
       await drinkApi.updateDrink(drink);
     });
   }

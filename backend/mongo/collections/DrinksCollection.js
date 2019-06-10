@@ -5,7 +5,7 @@ export default class DrinksCollection extends CollectionBase {
     return this.collection.find({}).toArray();
   }
 
-  createDrink(drink, desc) {
+  addDrink(drink, desc) {
     return this.collection.insertOne({
       _id: drink,
       name: drink,

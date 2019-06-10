@@ -89,24 +89,24 @@ class OrderScreen extends React.Component {
 
   renderCard(drink) {
     const style = {
-      height: 300,
+      height: 150,
       width: 200,
       backgroundColor: this.state.choice === drink.drink ? 'lightgrey' : null,
     };
-    const styleMedia = {
-      height: 150,
-      width: 200, 
-      paddingTop: 0,
-    }
+    // const styleMedia = {
+    //   height: 150,
+    //   width: 200, 
+    //   paddingTop: 0,
+    // }
     
     return <Grid key={drink.drink} item>
       <Card style={style}>
         <ButtonBase style={style} onClick={() => this.handleToggleDrink(drink.drink)}>
           <CardContent>
-            <CardMedia style={styleMedia}
+            {/* <CardMedia style={styleMedia}
               component="img"
               image={drink.image}
-            />
+            /> */}
             <br/>
             <Typography variant="h5" component="h2">
               {drink.drink}

@@ -21,6 +21,12 @@ router.get('/:drink', async (req, res) => {
   return res.json(drink);
 })
 
+// Add drink
+router.post('/', requireAdmin, async (req, res) => {
+  const drink = await res.locals.db.drinksCollection.addDrink(req.body.drink, req.body.desc);
+  return res.json(drink);
+})
+
 // Update drink
 router.put('/:drink', requireAdmin, async (req, res) => {
   console.log(req.params.drink, req.body.singleDesc)
@@ -28,6 +34,7 @@ router.put('/:drink', requireAdmin, async (req, res) => {
   return res.json(drink);
 })
 
+// Delete drink
 router.delete('/:drink', requireAdmin, async (req, res) => {
   console.log(req.params.drink, req.body.singleDesc)
   const drink = await res.locals.db.drinksCollection.deleteDrink(req.params.drink);
