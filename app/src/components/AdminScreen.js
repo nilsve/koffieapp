@@ -28,7 +28,6 @@ class AdminScreen extends React.Component {
     allDrinks: [],
     dialogOpen: false,
     dialogAddOpen: false,
-    dialogEditOpen: false,
   }
 
   componentDidMount() {
@@ -53,7 +52,6 @@ class AdminScreen extends React.Component {
           <Paper>
             {this.renderDialog()}
             {this.renderDialogAdd()}
-            {this.renderDialogEdit()}
             <Table>
               <TableHead>
                 <TableRow>
@@ -102,15 +100,10 @@ class AdminScreen extends React.Component {
                       {drink.drink}
                     </TableCell>
                     <TableCell>
-                      <TextField
-                        value={drink.desc}
-                        onChange={(e) => this.handleDrinkDescChange(drink, e.target.value)}
-                      />
+                      {drink.desc}
                     </TableCell>
                     <TableCell>
-                      <IconButton onClick={() => this.handleEditDrink(drink)}>
-                        <BuildIcon fontSize="small" />
-                      </IconButton>                      <IconButton onClick={() => this.handleRemoveDrink(drink)}>
+                      <IconButton onClick={() => this.handleRemoveDrink(drink)}>
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </TableCell>
@@ -179,43 +172,6 @@ class AdminScreen extends React.Component {
   }
 
   renderDialogAdd() {
-    return <Dialog
-      open={this.state.dialogAddOpen}
-      onClose={this.handleClose}
-      TransitionComponent={Transition}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">Drank toevoegen</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Voer onderstaande velden in om een drank toe te voegen
-        </DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="drink"
-          label="Naam van drank"
-          fullWidth
-        />
-        <TextField
-          margin="dense"
-          id="desc"
-          label="Omschrijving van drank"
-          fullWidth
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button color="primary" onClick={() => this.handleAddDrink(document.getElementById('drink').value, document.getElementById('desc').value)}>
-          Toevoegen
-        </Button>
-        <Button color="primary" onClick={this.handleClose}>
-          Annuleren
-        </Button>
-      </DialogActions>
-    </Dialog>
-  }
-
-  renderDialogEdit() {
     return <Dialog
       open={this.state.dialogAddOpen}
       onClose={this.handleClose}
