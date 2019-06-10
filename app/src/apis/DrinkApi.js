@@ -13,6 +13,10 @@ export default class DrinkApi extends BaseApi {
     return this.getJson(name)
   }
 
+  addDrink(drink, desc) {
+    return this.postJson('', {drink, desc})
+  }
+
   removeDrink(drink) {
     return this.deleteJson(drink)
   }
