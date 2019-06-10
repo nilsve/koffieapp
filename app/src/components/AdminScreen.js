@@ -218,7 +218,6 @@ class AdminScreen extends React.Component {
           autoFocus
           margin="dense"
           id="newDesc"
-          label="Omschrijving van de drank"
           placeholder={drink.desc}
           fullWidth
         />
