@@ -10,3 +10,4 @@ router.use(requireLogin);
 router.use('/users', require('./users'));
 router.use('/orders', require('./orders'));
 router.use('/groups', require('./groups'));
+router.use('/drinks', require('./drinks'));

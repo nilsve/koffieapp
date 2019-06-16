@@ -1,5 +1,4 @@
 import config from 'config';
-
 import {loadUserData} from 'auth/authHelpers';
 
 export default class BaseApi {

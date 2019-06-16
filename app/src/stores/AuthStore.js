@@ -72,4 +72,5 @@ export class AuthStore extends BaseStore {
   }
 }
 
+export {AuthContext};
 export const AuthConsumer = AuthContext.Consumer;

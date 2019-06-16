@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import set from 'lodash/set';
-import {Button} from '@material-ui/core';
+
+import {
+  Paper,                                                                // Backgrounds
+  Table, TableBody, TableCell, TableHead, TableRow,                     // Tables
+} from '@material-ui/core'
 
 class OrderTable extends Component {
   static propTypes = {
@@ -14,23 +18,24 @@ class OrderTable extends Component {
 
   render() {
     return <div>
-      <table>
-        <thead>
-          <tr>
-            <td>Product</td>
-            <td>Sterkte</td>
-            <td>Melk</td>
-            <td>Suiker</td>
-            <td>Code</td>
-            <td>Besteller</td>
-            <td>Gehaald</td>
-          </tr>
-        </thead>
-        <tbody>
-          {this.renderOrders()}
-        </tbody>
-      </table>
-      <Button color="primary" variant="contained" onClick={this.handleAfhalenClick}>Afhalen</Button>
+      <Paper>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Product</TableCell>
+              <TableCell>Sterkte</TableCell>
+              <TableCell>Melk</TableCell>
+              <TableCell>Suiker</TableCell>
+              <TableCell>Code</TableCell>
+              <TableCell>Besteller</TableCell>
+              <TableCell>Gehaald</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {this.renderOrders()}
+          </TableBody>
+        </Table>
+      </Paper>
     </div>
   }
 
@@ -41,15 +46,15 @@ class OrderTable extends Component {
   renderOrder(order) {
     const {drink, strength, milk, sugar, username, code} = order;
 
-    return <tr>
-      <td>{drink}</td>
-      <td>{strength}</td>
-      <td>{milk}</td>
-      <td>{sugar}</td>
-      <td>{code}</td>
-      <td>{username}</td>
-      <td><input type="checkbox" checked={this.isChecked(order)} onClick={() => this.handleCheck(order)}></input></td>
-    </tr>;
+    return <TableRow>
+      <TableCell>{drink}</TableCell>
+      <TableCell>{strength}</TableCell>
+      <TableCell>{milk}</TableCell>
+      <TableCell>{sugar}</TableCell>
+      <TableCell>{code}</TableCell>
+      <TableCell>{username}</TableCell>
+      <TableCell><input type="checkbox" checked={this.isChecked(order)} onClick={() => this.handleCheck(order)}></input></TableCell>
+    </TableRow>;
   }
 
   isChecked(order) {

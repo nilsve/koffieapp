@@ -6,7 +6,13 @@ const ObjectId = require('mongodb').ObjectId
 // Get all users
 router.get('/', async (req, res) => {
   const users = await res.locals.db.usersCollection.getAllUsers();
-  return res.json(users)
+  const filteredUsers = users.map((user) => {
+    return {
+      username: user.name,
+      isAdmin: user.isAdmin
+    }
+  })
+  return res.json(filteredUsers)
 })
 
 // Get single user
