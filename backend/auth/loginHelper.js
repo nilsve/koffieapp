@@ -11,7 +11,7 @@ export function login(username, password) {
     const user = await getUser(username, password);
 
     if (user) {
-      const token = jwt.sign({
+      jwt.sign({
         exp: Math.floor(Date.now() / 1000) + ((60 * 60) * 24) * 7 * 4 * 12, // Token is 1 jaar lang geldig
         data: {
           username,
@@ -63,5 +63,9 @@ async function getUser(username, password) {
   
   const hash = await pbkdf2(user.salt, password);
 
-  return user && user.password === hash;
+  if (user.password === hash) {
+    return user;
+  } else {
+    return null;
+  }
 }
