@@ -15,7 +15,6 @@ export const requireAdmin = async (req, res, next) => {
   if (res.locals.userInfo.isAdmin) {
     next();
   } else {
-    console.log(res.locals)
     return res.sendStatus(403);
   }
 }
