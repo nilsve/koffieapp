@@ -1,7 +1,7 @@
 import React from 'react';
 import {AuthConsumer} from 'stores/AuthStore';
 import {userApi, orderApi, drinkApi} from 'apis';
-import {Typography, CardMedia, Grid, Card, CardContent, Button, ButtonBase, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
+import {Typography, Grid, Card, CardContent, Button, ButtonBase, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
 import Slider from '@material-ui/lab/Slider';
 import {Americano, Cappuccino, CafeLatte, Espresso, Macchiato, Mocha} from '../assets';
 import Slide from '@material-ui/core/Slide';
@@ -93,21 +93,11 @@ class OrderScreen extends React.Component {
       width: 200,
       backgroundColor: this.state.choice === drink.drink ? 'lightgrey' : null,
     };
-    // const styleMedia = {
-    //   height: 150,
-    //   width: 200, 
-    //   paddingTop: 0,
-    // }
     
     return <Grid key={drink.drink} item>
       <Card style={style}>
         <ButtonBase style={style} onClick={() => this.handleToggleDrink(drink.drink)}>
           <CardContent>
-            {/* <CardMedia style={styleMedia}
-              component="img"
-              image={drink.image}
-            /> */}
-            <br/>
             <Typography variant="h5" component="h2">
               {drink.drink}
             </Typography>
